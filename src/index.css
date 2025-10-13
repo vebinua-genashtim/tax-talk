@@ -47,6 +47,22 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Smooth scrolling for mobile */
+  @media (max-width: 640px) {
+    .overflow-x-auto {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Improved touch targets for mobile */
+  @media (max-width: 640px) {
+    button {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
 }
 
 ::-webkit-scrollbar {

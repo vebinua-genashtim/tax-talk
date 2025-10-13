@@ -99,8 +99,8 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full p-4 sm:p-6 md:p-8 relative max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -108,17 +108,17 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-3xl font-bold mb-2" style={{ color: '#033a66' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: '#033a66' }}>
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
           Access Tax Academy Singapore training platform
         </p>
 
         {showDemoAccounts && !isSignUp && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Demo Accounts</h3>
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Demo Accounts</h3>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleInitializeDemoUsers}
@@ -137,12 +137,12 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
                 </button>
               </div>
             </div>
-            <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+            <div className="space-y-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
               {demoAccounts.map((account) => (
-                <div key={account.email} className="text-sm">
+                <div key={account.email} className="text-xs sm:text-sm">
                   <p className="font-semibold text-gray-800">{account.name}</p>
                   <p className="text-gray-600">{account.description}</p>
-                  <p className="text-gray-700 font-mono mt-1">
+                  <p className="text-gray-700 font-mono mt-1 text-xs">
                     {account.email} / demo123456
                   </p>
                 </div>

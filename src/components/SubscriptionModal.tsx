@@ -29,8 +29,8 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[95vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[95vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition z-10"
@@ -38,26 +38,26 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
           <X className="w-6 h-6" />
         </button>
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}>
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <div className="mb-6 sm:mb-8">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}>
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none" className="sm:w-8 sm:h-8">
                 <path d="M16 4L4 10V16C4 23 9 27.5 16 28C23 27.5 28 23 28 16V10L16 4Z" fill="white" opacity="0.9"/>
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
               Upgrade to a Pro Membership
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500">
               Get all access and an extra 20% off when you subscribe annually
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
               {/* Left Column - Billing Info */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">
                     Billed to
@@ -270,14 +270,14 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
             </div>
 
             {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">
                   ${selectedPlan === 'monthly' ? monthlyPrice : annualPrice} / {selectedPlan === 'monthly' ? 'Month' : 'Year'}
                 </div>
                 <button
                   type="button"
-                  className="text-sm hover:underline mt-1"
+                  className="text-xs sm:text-sm hover:underline mt-1"
                   style={{ color: '#033a66' }}
                 >
                   Details
@@ -285,7 +285,7 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
               </div>
               <button
                 type="submit"
-                className="px-8 py-3 rounded-lg text-white font-semibold transition hover:opacity-90 shadow-lg text-sm"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-white font-semibold transition hover:opacity-90 shadow-lg text-sm"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
               >
                 Upgrade to Plus

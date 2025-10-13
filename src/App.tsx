@@ -215,10 +215,10 @@ function AppContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading content...</p>
+          <p className="text-gray-600 text-sm sm:text-base">Loading content...</p>
         </div>
       </div>
     );
@@ -236,13 +236,13 @@ function AppContent() {
 
         {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
 
-        <div className={searchQuery ? 'pt-24 pb-20' : 'pb-20 -mt-32 relative z-10'}>
+        <div className={searchQuery ? 'pt-16 sm:pt-20 pb-12 sm:pb-20' : 'pb-12 sm:pb-20 -mt-20 sm:-mt-32 relative z-10'}>
           {!searchQuery && (
-            <div className="px-4 md:px-12 mb-8">
-              <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div className="px-3 sm:px-4 md:px-12 mb-6 sm:mb-8">
+              <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
                     !selectedCategory
                       ? 'bg-white text-black'
                       : 'bg-gray-800 text-white hover:bg-gray-700'
@@ -254,7 +254,7 @@ function AppContent() {
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
                       selectedCategory === category.id
                         ? 'bg-white text-black'
                         : 'bg-gray-800 text-white hover:bg-gray-700'
@@ -267,14 +267,14 @@ function AppContent() {
             </div>
           )}
           {searchQuery && filteredVideos.length === 0 && (
-            <div className="text-center py-20 px-4">
-              <p className="text-white text-lg">No videos found matching "{searchQuery}"</p>
+            <div className="text-center py-12 sm:py-20 px-4">
+              <p className="text-white text-base sm:text-lg">No videos found matching "{searchQuery}"</p>
             </div>
           )}
 
           {searchQuery && filteredVideos.length > 0 && (
-            <div className="mb-12 px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Search Results</h2>
+            <div className="mb-8 sm:mb-12 px-3 sm:px-4 md:px-12">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Search Results</h2>
               <VideoRow videos={filteredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
             </div>
           )}
@@ -282,8 +282,8 @@ function AppContent() {
           {!searchQuery && !selectedCategory && (
             <>
               {purchases.size > 0 && (
-                <div className="mb-20 px-4 md:px-12">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">My Purchased Videos</h2>
+                <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">My Purchased Videos</h2>
                   <VideoRow
                     videos={filteredVideos.filter(v => purchases.has(v.id))}
                     hasAccess={hasAccess}
@@ -292,29 +292,29 @@ function AppContent() {
                 </div>
               )}
 
-              <div className="mb-20 px-4 md:px-12">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Featured Training</h2>
+              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Featured Training</h2>
                 <VideoRow videos={featuredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-20 px-4 md:px-12">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">New Releases</h2>
+              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">New Releases</h2>
                 <VideoRow videos={newVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-20 px-4 md:px-12">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Most Popular</h2>
+              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Most Popular</h2>
                 <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
             </>
           )}
 
           {!searchQuery && selectedCategory && (
-            <div className="px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">
+            <div className="px-3 sm:px-4 md:px-12">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                 {filteredVideos.map(video => (
                   <div key={video.id} className="w-full">
                     <VideoCard
@@ -367,13 +367,13 @@ function AppContent() {
 
       {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={handleGuestSubscribeClick} isLoggedIn={false} />}
 
-      <div className={searchQuery ? 'pt-24 px-4 md:px-8' : 'px-4 md:px-8 py-8'}>
+      <div className={searchQuery ? 'pt-16 sm:pt-20 px-3 sm:px-4 md:px-8' : 'px-3 sm:px-4 md:px-8 py-6 sm:py-8'}>
         {!searchQuery && (
-          <div className="mb-8">
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all ${
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
                   !selectedCategory
                     ? 'text-white shadow-lg'
                     : 'bg-white text-gray-700 hover:shadow-md'
@@ -386,7 +386,7 @@ function AppContent() {
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
                     selectedCategory === category.id
                       ? 'text-white shadow-lg'
                       : 'bg-white text-gray-700 hover:shadow-md'
@@ -400,17 +400,17 @@ function AppContent() {
           </div>
         )}
         {searchQuery && filteredVideos.length === 0 && (
-          <div className="px-4 md:px-12 py-20 text-center">
-            <p className="text-gray-900 text-xl">No videos found matching "{searchQuery}"</p>
+          <div className="px-3 sm:px-4 md:px-12 py-12 sm:py-20 text-center">
+            <p className="text-gray-900 text-base sm:text-xl">No videos found matching "{searchQuery}"</p>
           </div>
         )}
 
         {searchQuery && filteredVideos.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#033a66' }}>Search Results</h2>
-            <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Search Results</h2>
+            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {filteredVideos.map(video => (
-                <div key={video.id} className="flex-shrink-0 w-[240px]">
+                <div key={video.id} className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[240px]">
                   <VideoCard
                     video={video}
                     hasAccess={hasAccess(video.id)}
@@ -424,18 +424,18 @@ function AppContent() {
 
         {!searchQuery && !selectedCategory && (
           <>
-            <div className="mb-20">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#033a66' }}>Featured Training</h2>
+            <div className="mb-12 sm:mb-16 md:mb-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Featured Training</h2>
               <VideoRow videos={featuredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
             </div>
 
-            <div className="mb-20">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#033a66' }}>New Releases</h2>
+            <div className="mb-12 sm:mb-16 md:mb-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>New Releases</h2>
               <VideoRow videos={newVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
             </div>
 
-            <div className="mb-20">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#033a66' }}>Most Popular</h2>
+            <div className="mb-12 sm:mb-16 md:mb-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Most Popular</h2>
               <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
             </div>
           </>
@@ -443,10 +443,10 @@ function AppContent() {
 
         {!searchQuery && selectedCategory && (
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#033a66' }}>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>
               {categories.find(c => c.id === selectedCategory)?.name}
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
               {filteredVideos.map(video => (
                 <div key={video.id} className="w-full">
                   <VideoCard
@@ -461,48 +461,48 @@ function AppContent() {
         )}
       </div>
 
-      <div className="px-4 md:px-12 py-20 text-center relative">
+      <div className="px-3 sm:px-4 md:px-12 py-12 sm:py-16 md:py-20 text-center relative">
         <div className="max-w-5xl mx-auto relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 drop-shadow-lg" style={{ color: '#033a66' }}>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 drop-shadow-lg" style={{ color: '#033a66' }}>
             Subscribe Today
           </h2>
-          <p className="text-xl mb-12" style={{ color: '#1f2937' }}>
+          <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 px-2" style={{ color: '#1f2937' }}>
             Subscribe today to access comprehensive, professional tax training videos designed to enhance your expertise.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
-            <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition flex flex-col">
-              <h3 className="text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Monthly</h3>
-              <div className="mb-6">
-                <span className="text-4xl font-bold" style={{ color: '#827546' }}>$18.99</span>
-                <span className="text-gray-600">/mo</span>
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto mb-6 sm:mb-8">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition flex flex-col">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Monthly</h3>
+              <div className="mb-4 sm:mb-6">
+                <span className="text-3xl sm:text-4xl font-bold" style={{ color: '#827546' }}>$18.99</span>
+                <span className="text-gray-600 text-sm sm:text-base">/mo</span>
               </div>
-              <p className="text-gray-600 mb-6 flex-grow">Charged once per month. Cancel anytime.</p>
+              <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6 flex-grow">Charged once per month. Cancel anytime.</p>
               <button
                 onClick={handleGuestSubscribeClick}
-                className="w-full px-8 py-4 rounded-lg text-white font-semibold text-lg transition hover:scale-105 hover:shadow-xl"
+                className="w-full px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-white font-semibold text-base sm:text-lg transition hover:scale-105 hover:shadow-xl"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
               >
                 SUBSCRIBE
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition relative flex flex-col">
-              <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition relative flex flex-col">
+              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-red-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full">
                 BEST VALUE
               </div>
-              <h3 className="text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Annually</h3>
-              <div className="mb-6">
-                <span className="text-4xl font-bold" style={{ color: '#827546' }}>$129.99</span>
-                <span className="text-gray-600">/yr</span>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Annually</h3>
+              <div className="mb-4 sm:mb-6">
+                <span className="text-3xl sm:text-4xl font-bold" style={{ color: '#827546' }}>$129.99</span>
+                <span className="text-gray-600 text-sm sm:text-base">/yr</span>
               </div>
               <div className="flex-grow">
-                <p className="text-gray-600 mb-2">Only $10.83 per month!</p>
-                <p className="text-gray-600 mb-6">Charged once per year. Cancel anytime.</p>
+                <p className="text-gray-600 text-sm sm:text-base mb-2">Only $10.83 per month!</p>
+                <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6">Charged once per year. Cancel anytime.</p>
               </div>
               <button
                 onClick={handleGuestSubscribeClick}
-                className="w-full px-8 py-4 rounded-lg text-white font-semibold text-lg transition hover:scale-105 hover:shadow-xl"
+                className="w-full px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-white font-semibold text-base sm:text-lg transition hover:scale-105 hover:shadow-xl"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
               >
                 SUBSCRIBE
@@ -512,18 +512,18 @@ function AppContent() {
         </div>
       </div>
 
-      <footer className="relative pt-24 pb-12 px-4 md:px-12" style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(3, 58, 102, 0.02) 2%, rgba(3, 56, 98, 0.05) 4%, rgba(3, 54, 95, 0.08) 6%, rgba(3, 52, 91, 0.12) 8%, rgba(3, 50, 88, 0.16) 10%, rgba(3, 48, 84, 0.20) 12%, rgba(3, 46, 81, 0.24) 14%, rgba(3, 44, 77, 0.28) 16%, rgba(3, 42, 74, 0.32) 18%, rgba(3, 40, 70, 0.36) 20%, rgba(3, 38, 67, 0.40) 22%, rgba(3, 36, 63, 0.44) 24%, rgba(3, 34, 60, 0.48) 26%, rgba(2, 32, 56, 0.52) 28%, rgba(2, 30, 53, 0.56) 30%, rgba(2, 28, 49, 0.62) 34%, rgba(2, 26, 45, 0.68) 38%, rgba(2, 24, 41, 0.74) 42%, rgba(2, 22, 37, 0.80) 46%, rgba(2, 20, 33, 0.86) 50%, rgba(2, 18, 29, 0.91) 56%, rgba(1, 16, 26, 0.94) 62%, rgba(1, 12, 20, 0.96) 72%, rgba(0, 8, 14, 0.98) 82%, rgba(0, 4, 8, 0.99) 92%, rgba(0, 0, 0, 1) 100%)', marginTop: '-8rem', paddingTop: '12rem' }}>
+      <footer className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 px-3 sm:px-4 md:px-12" style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(3, 58, 102, 0.02) 2%, rgba(3, 56, 98, 0.05) 4%, rgba(3, 54, 95, 0.08) 6%, rgba(3, 52, 91, 0.12) 8%, rgba(3, 50, 88, 0.16) 10%, rgba(3, 48, 84, 0.20) 12%, rgba(3, 46, 81, 0.24) 14%, rgba(3, 44, 77, 0.28) 16%, rgba(3, 42, 74, 0.32) 18%, rgba(3, 40, 70, 0.36) 20%, rgba(3, 38, 67, 0.40) 22%, rgba(3, 36, 63, 0.44) 24%, rgba(3, 34, 60, 0.48) 26%, rgba(2, 32, 56, 0.52) 28%, rgba(2, 30, 53, 0.56) 30%, rgba(2, 28, 49, 0.62) 34%, rgba(2, 26, 45, 0.68) 38%, rgba(2, 24, 41, 0.74) 42%, rgba(2, 22, 37, 0.80) 46%, rgba(2, 20, 33, 0.86) 50%, rgba(2, 18, 29, 0.91) 56%, rgba(1, 16, 26, 0.94) 62%, rgba(1, 12, 20, 0.96) 72%, rgba(0, 8, 14, 0.98) 82%, rgba(0, 4, 8, 0.99) 92%, rgba(0, 0, 0, 1) 100%)', marginTop: '-8rem', paddingTop: '12rem' }}>
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-12 mb-16">
-            <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold text-white mb-3">Tax Academy Singapore</h3>
-              <p className="text-white text-sm leading-relaxed mb-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12 md:mb-16">
+            <div className="sm:col-span-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Tax Academy Singapore</h3>
+              <p className="text-white text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
                 Leading provider of professional tax training and certification programs for accounting professionals across Singapore and beyond.
               </p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Platform</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Platform</h4>
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <li><a href="#browse" className="text-white hover:text-gray-200 transition">Browse Videos</a></li>
                 <li><a href="#pricing" className="text-white hover:text-gray-200 transition">Pricing</a></li>
                 <li><a href="#subscribe" className="text-white hover:text-gray-200 transition">Subscribe</a></li>
@@ -531,25 +531,25 @@ function AppContent() {
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Support</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Support</h4>
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <li><a href="#help" className="text-white hover:text-gray-200 transition">Help Center</a></li>
                 <li><a href="#contact" className="text-white hover:text-gray-200 transition">Contact Us</a></li>
                 <li><a href="#faq" className="text-white hover:text-gray-200 transition">FAQ</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Legal</h4>
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <li><a href="#terms" className="text-white hover:text-gray-200 transition">Terms of Service</a></li>
                 <li><a href="#privacy" className="text-white hover:text-gray-200 transition">Privacy Policy</a></li>
                 <li><a href="#cookies" className="text-white hover:text-gray-200 transition">Cookie Policy</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-600/40 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-white">
-            <p>&copy; 2025 Tax Academy Singapore. All rights reserved.</p>
-            <div className="flex gap-6 mt-4 md:mt-0">
+          <div className="border-t border-gray-600/40 pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-white gap-4">
+            <p className="text-center sm:text-left">&copy; 2025 Tax Academy Singapore. All rights reserved.</p>
+            <div className="flex gap-4 sm:gap-6">
               <a href="#" className="hover:text-gray-300 transition">LinkedIn</a>
               <a href="#" className="hover:text-gray-300 transition">Twitter</a>
               <a href="#" className="hover:text-gray-300 transition">YouTube</a>
