@@ -63,7 +63,7 @@ export function VideoRow({ videos, hasAccess, onClick }: VideoRowProps) {
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {videos.map((video) => (
-          <div key={video.id} className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[240px]">
+          <div key={video.id} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[360px]">
             <VideoCard
               video={video}
               hasAccess={hasAccess(video.id)}

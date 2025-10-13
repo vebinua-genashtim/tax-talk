@@ -275,7 +275,16 @@ function AppContent() {
           {searchQuery && filteredVideos.length > 0 && (
             <div className="mb-8 sm:mb-12 px-3 sm:px-4 md:px-12">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Search Results</h2>
-              <VideoRow videos={filteredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {filteredVideos.map(video => (
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    hasAccess={hasAccess(video.id)}
+                    onClick={handleVideoClick}
+                  />
+                ))}
+              </div>
             </div>
           )}
 
@@ -314,15 +323,14 @@ function AppContent() {
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {filteredVideos.map(video => (
-                  <div key={video.id} className="w-full">
-                    <VideoCard
-                      video={video}
-                      hasAccess={hasAccess(video.id)}
-                      onClick={handleVideoClick}
-                    />
-                  </div>
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    hasAccess={hasAccess(video.id)}
+                    onClick={handleVideoClick}
+                  />
                 ))}
               </div>
             </div>
@@ -408,15 +416,14 @@ function AppContent() {
         {searchQuery && filteredVideos.length > 0 && (
           <div className="mb-8 sm:mb-12">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Search Results</h2>
-            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filteredVideos.map(video => (
-                <div key={video.id} className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[240px]">
-                  <VideoCard
-                    video={video}
-                    hasAccess={hasAccess(video.id)}
-                    onClick={handleVideoClick}
-                  />
-                </div>
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  hasAccess={hasAccess(video.id)}
+                  onClick={handleVideoClick}
+                />
               ))}
             </div>
           </div>
@@ -446,15 +453,14 @@ function AppContent() {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>
               {categories.find(c => c.id === selectedCategory)?.name}
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filteredVideos.map(video => (
-                <div key={video.id} className="w-full">
-                  <VideoCard
-                    video={video}
-                    hasAccess={hasAccess(video.id)}
-                    onClick={handleVideoClick}
-                  />
-                </div>
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  hasAccess={hasAccess(video.id)}
+                  onClick={handleVideoClick}
+                />
               ))}
             </div>
           </div>
