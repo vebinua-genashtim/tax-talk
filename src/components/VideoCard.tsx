@@ -30,25 +30,25 @@ export function VideoCard({ video, hasAccess, onClick }: VideoCardProps) {
           </div>
         )}
 
-        <div className="absolute top-2 sm:top-2.5 left-2 sm:left-2.5 bg-black/75 backdrop-blur-sm text-white text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg flex items-center gap-1 sm:gap-1.5">
-          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+        <div className="absolute top-2 left-2 bg-black/75 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-md flex items-center gap-1">
+          <Clock className="w-3 h-3" />
           <span>{video.duration_minutes}m</span>
         </div>
 
         {video.is_new && (
-          <div className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 text-white text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg" style={{ background: '#827546' }}>
+          <div className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-md" style={{ background: '#827546' }}>
             NEW
           </div>
         )}
 
         {!hasAccess && (
-          <div className="absolute top-2 sm:top-2.5 left-1/2 -translate-x-1/2 bg-black/75 backdrop-blur-sm text-white text-sm sm:text-base font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/75 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-md">
             ${video.price.toFixed(2)}
           </div>
         )}
 
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-2.5 sm:p-3 md:p-4">
-          <h3 className="font-semibold text-white text-sm sm:text-base line-clamp-2 leading-snug">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-2 sm:p-2.5">
+          <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 leading-snug">
             {video.title}
           </h3>
         </div>
