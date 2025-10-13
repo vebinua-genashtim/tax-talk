@@ -161,18 +161,9 @@ export function VideoModal({ isOpen, video, onClose, hasAccess, onPurchase }: Vi
               </div>
             )}
 
-            <p className="text-gray-700 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
               {video.description}
             </p>
-
-            <div className="border-t pt-4 sm:pt-6">
-              <h3 className="font-semibold text-gray-800 mb-3 sm:mb-4 text-sm sm:text-base">About Tax Academy Singapore</h3>
-              <p className="text-gray-600 text-xs sm:text-sm">
-                Tax Academy Singapore provides comprehensive tax training and professional development
-                for tax practitioners, accountants, and finance professionals. Our expert-led courses
-                cover all aspects of Singapore taxation, from GST to corporate tax planning.
-              </p>
-            </div>
           </div>
         </div>
       </div>
