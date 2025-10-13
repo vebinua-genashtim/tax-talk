@@ -5,6 +5,7 @@ import { VideoRow } from './components/VideoRow';
 import { VideoCard } from './components/VideoCard';
 import { MobileVideoCard } from './components/MobileVideoCard';
 import { ContinueWatchingRow } from './components/ContinueWatchingRow';
+import { LearningStats } from './components/LearningStats';
 import { AuthModal } from './components/AuthModal';
 import { VideoModal } from './components/VideoModal';
 import { SubscriptionModal } from './components/SubscriptionModal';
@@ -20,6 +21,12 @@ function AppContent() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
+  const [learningStats, setLearningStats] = useState({
+    weeklyMinutes: 0,
+    weeklyChange: 0,
+    completedVideos: 0,
+    weeklyCompleted: 0
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,9 +50,16 @@ function AppContent() {
     if (user) {
       loadUserPurchases();
       loadWatchProgress();
+      loadLearningStats();
     } else {
       setPurchases(new Set());
       setWatchProgress(new Map());
+      setLearningStats({
+        weeklyMinutes: 0,
+        weeklyChange: 0,
+        completedVideos: 0,
+        weeklyCompleted: 0
+      });
     }
   }, [user]);
 
@@ -100,6 +114,63 @@ function AppContent() {
       setWatchProgress(progressMap);
     } catch (error) {
       console.error('Error loading watch progress:', error);
+    }
+  };
+
+  const loadLearningStats = async () => {
+    if (!user) return;
+
+    try {
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+      // Get this week's watch progress
+      const { data: thisWeekData, error: thisWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, completed, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', oneWeekAgo.toISOString());
+
+      if (thisWeekError) throw thisWeekError;
+
+      // Get last week's watch progress for comparison
+      const { data: lastWeekData, error: lastWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', twoWeeksAgo.toISOString())
+        .lt('last_watched_at', oneWeekAgo.toISOString());
+
+      if (lastWeekError) throw lastWeekError;
+
+      // Get total completed videos
+      const { data: completedData, error: completedError } = await supabase
+        .from('watch_progress')
+        .select('video_id, completed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
+
+      if (completedError) throw completedError;
+
+      // Calculate stats
+      const thisWeekMinutes = Math.round((thisWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const lastWeekMinutes = Math.round((lastWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const weeklyChange = lastWeekMinutes > 0
+        ? Math.round(((thisWeekMinutes - lastWeekMinutes) / lastWeekMinutes) * 100)
+        : thisWeekMinutes > 0 ? 100 : 0;
+
+      const completedVideos = completedData?.length || 0;
+      const weeklyCompleted = thisWeekData?.filter(item => item.completed).length || 0;
+
+      setLearningStats({
+        weeklyMinutes: thisWeekMinutes,
+        weeklyChange,
+        completedVideos,
+        weeklyCompleted
+      });
+    } catch (error) {
+      console.error('Error loading learning stats:', error);
     }
   };
 
@@ -297,6 +368,15 @@ function AppContent() {
 
           {!searchQuery && !selectedCategory && (
             <>
+              <LearningStats
+                weeklyMinutes={learningStats.weeklyMinutes}
+                weeklyChange={learningStats.weeklyChange}
+                completedVideos={learningStats.completedVideos}
+                weeklyCompleted={learningStats.weeklyCompleted}
+                subscriptionStatus={profile?.subscription_status || 'free'}
+                onUpgrade={() => setSubscriptionModalOpen(true)}
+              />
+
               {continueWatchingVideos.length > 0 && (
                 <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Continue Watching</h2>
