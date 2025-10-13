@@ -237,35 +237,6 @@ function AppContent() {
         {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
 
         <div className={searchQuery ? 'pt-16 sm:pt-20 pb-12 sm:pb-20' : 'pb-12 sm:pb-20 -mt-20 sm:-mt-32 relative z-10'}>
-          {!searchQuery && (
-            <div className="px-3 sm:px-4 md:px-12 mb-6 sm:mb-8">
-              <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
-                    !selectedCategory
-                      ? 'bg-white text-black'
-                      : 'bg-gray-800 text-white hover:bg-gray-700'
-                  }`}
-                >
-                  All
-                </button>
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
-                      selectedCategory === category.id
-                        ? 'bg-white text-black'
-                        : 'bg-gray-800 text-white hover:bg-gray-700'
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
           {searchQuery && filteredVideos.length === 0 && (
             <div className="text-center py-12 sm:py-20 px-4">
               <p className="text-white text-base sm:text-lg">No videos found matching "{searchQuery}"</p>
@@ -315,11 +286,39 @@ function AppContent() {
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Most Popular</h2>
                 <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
+
+              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Browse by Category</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                  {categories.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 hover:scale-105 transition-transform duration-200"
+                    >
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <h3 className="text-white font-bold text-sm sm:text-base md:text-lg text-center leading-tight">
+                          {category.name}
+                        </h3>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </>
           )}
 
-          {!searchQuery && selectedCategory && (
+          {selectedCategory && (
             <div className="px-3 sm:px-4 md:px-12">
+              <div className="mb-4 sm:mb-6">
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  className="text-white hover:text-gray-300 transition flex items-center gap-2 text-sm sm:text-base"
+                >
+                  <span>←</span> Back to All Videos
+                </button>
+              </div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
@@ -376,37 +375,6 @@ function AppContent() {
       {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={handleGuestSubscribeClick} isLoggedIn={false} />}
 
       <div className={searchQuery ? 'pt-16 sm:pt-20 px-3 sm:px-4 md:px-8' : 'px-3 sm:px-4 md:px-8 py-6 sm:py-8'}>
-        {!searchQuery && (
-          <div className="mb-6 sm:mb-8">
-            <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
-                  !selectedCategory
-                    ? 'text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:shadow-md'
-                }`}
-                style={!selectedCategory ? { background: 'linear-gradient(135deg, #033a66 0%, #044d85 100%)' } : {}}
-              >
-                All
-              </button>
-              {categories.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
-                    selectedCategory === category.id
-                      ? 'text-white shadow-lg'
-                      : 'bg-white text-gray-700 hover:shadow-md'
-                  }`}
-                  style={selectedCategory === category.id ? { background: 'linear-gradient(135deg, #033a66 0%, #044d85 100%)' } : {}}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
         {searchQuery && filteredVideos.length === 0 && (
           <div className="px-3 sm:px-4 md:px-12 py-12 sm:py-20 text-center">
             <p className="text-gray-900 text-base sm:text-xl">No videos found matching "{searchQuery}"</p>
@@ -429,7 +397,7 @@ function AppContent() {
           </div>
         )}
 
-        {!searchQuery && !selectedCategory && (
+        {!selectedCategory && (
           <>
             <div className="mb-12 sm:mb-16 md:mb-20">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Featured Training</h2>
@@ -445,11 +413,40 @@ function AppContent() {
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Most Popular</h2>
               <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
             </div>
+
+            <div className="mb-12 sm:mb-16 md:mb-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Browse by Category</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                {categories.map(category => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 hover:scale-105 transition-transform duration-200 shadow-lg"
+                  >
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
+                    <div className="absolute inset-0 flex items-center justify-center p-4">
+                      <h3 className="text-white font-bold text-sm sm:text-base md:text-lg text-center leading-tight drop-shadow-lg">
+                        {category.name}
+                      </h3>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
-        {!searchQuery && selectedCategory && (
+        {selectedCategory && (
           <div>
+            <div className="mb-4 sm:mb-6">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="hover:opacity-70 transition flex items-center gap-2 text-sm sm:text-base"
+                style={{ color: '#033a66' }}
+              >
+                <span>←</span> Back to All Videos
+              </button>
+            </div>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>
               {categories.find(c => c.id === selectedCategory)?.name}
             </h2>
