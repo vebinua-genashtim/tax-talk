@@ -5,9 +5,10 @@ interface VideoCardProps {
   video: Video;
   hasAccess: boolean;
   onClick: (video: Video) => void;
+  progress?: number;
 }
 
-export function VideoCard({ video, hasAccess, onClick }: VideoCardProps) {
+export function VideoCard({ video, hasAccess, onClick, progress }: VideoCardProps) {
   return (
     <div
       className="cursor-pointer transition-all duration-200 active:scale-95 sm:hover:scale-105"
@@ -51,6 +52,14 @@ export function VideoCard({ video, hasAccess, onClick }: VideoCardProps) {
           <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 leading-snug">
             {video.title}
           </h3>
+          {progress !== undefined && progress > 0 && (
+            <div className="mt-1.5 w-full bg-gray-700 rounded-full h-1">
+              <div
+                className="bg-red-600 h-1 rounded-full transition-all"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Hero } from './components/Hero';
 import { VideoRow } from './components/VideoRow';
 import { VideoCard } from './components/VideoCard';
 import { MobileVideoCard } from './components/MobileVideoCard';
+import { ContinueWatchingRow } from './components/ContinueWatchingRow';
 import { AuthModal } from './components/AuthModal';
 import { VideoModal } from './components/VideoModal';
 import { SubscriptionModal } from './components/SubscriptionModal';
@@ -18,6 +19,7 @@ function AppContent() {
   const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
+  const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,8 +42,10 @@ function AppContent() {
   useEffect(() => {
     if (user) {
       loadUserPurchases();
+      loadWatchProgress();
     } else {
       setPurchases(new Set());
+      setWatchProgress(new Map());
     }
   }, [user]);
 
@@ -69,6 +73,33 @@ function AppContent() {
       setPurchases(purchasedVideoIds);
     } catch (error) {
       console.error('Error loading purchases:', error);
+    }
+  };
+
+  const loadWatchProgress = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('watch_progress')
+        .select('video_id, progress_seconds, duration_seconds, completed')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      const progressMap = new Map(
+        data?.map(p => [
+          p.video_id,
+          {
+            progress_seconds: p.progress_seconds,
+            duration_seconds: p.duration_seconds,
+            completed: p.completed
+          }
+        ]) || []
+      );
+      setWatchProgress(progressMap);
+    } catch (error) {
+      console.error('Error loading watch progress:', error);
     }
   };
 
@@ -200,6 +231,11 @@ function AppContent() {
   const newVideos = filteredVideos.filter(v => v.is_new).slice(0, 6);
   const popularVideos = [...filteredVideos].sort((a, b) => b.view_count - a.view_count).slice(0, 6);
 
+  const continueWatchingVideos = filteredVideos.filter(video => {
+    const progress = watchProgress.get(video.id);
+    return progress && !progress.completed && progress.progress_seconds > 0;
+  }).slice(0, 6);
+
   const handleGuestSubscribeClick = () => {
     setSubscriptionModalOpen(true);
   };
@@ -261,6 +297,18 @@ function AppContent() {
 
           {!searchQuery && !selectedCategory && (
             <>
+              {continueWatchingVideos.length > 0 && (
+                <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Continue Watching</h2>
+                  <ContinueWatchingRow
+                    videos={continueWatchingVideos}
+                    watchProgress={watchProgress}
+                    hasAccess={hasAccess}
+                    onClick={handleVideoClick}
+                  />
+                </div>
+              )}
+
               {purchases.size > 0 && (
                 <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">My Purchased Videos</h2>
