@@ -39,7 +39,7 @@ export default function HomeScreen({ navigation }: Props) {
       console.log('Loading videos...');
       const { data, error } = await supabase
         .from('videos')
-        .select('*')
+        .select('*, category:categories(name)')
         .order('created_at', { ascending: false });
 
       console.log('Videos response:', { data, error });
@@ -68,10 +68,11 @@ export default function HomeScreen({ navigation }: Props) {
   };
 
   const groupedVideos = videos.reduce((acc, video) => {
-    if (!acc[video.category]) {
-      acc[video.category] = [];
+    const categoryName = video.category?.name || 'Uncategorized';
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
     }
-    acc[video.category].push(video);
+    acc[categoryName].push(video);
     return acc;
   }, {} as Record<string, Video[]>);
 

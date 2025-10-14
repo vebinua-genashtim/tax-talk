@@ -23,7 +23,10 @@ export interface Video {
   full_video_url: string;
   duration_minutes: number;
   price: number;
-  category: string;
+  category_id: string;
+  category?: {
+    name: string;
+  };
   view_count: number;
   created_at: string;
 }
