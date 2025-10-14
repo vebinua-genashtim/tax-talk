@@ -591,54 +591,96 @@ function AppContent() {
         )}
       </div>
 
-      <div className="px-3 sm:px-4 md:px-12 py-12 sm:py-16 md:py-20 text-center relative">
-        <div className="max-w-5xl mx-auto relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 drop-shadow-lg" style={{ color: '#033a66' }}>
-            Subscribe Today
+      <div className="px-4 sm:px-6 md:px-12 py-20 sm:py-28 md:py-32 text-center relative bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto relative z-10">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 tracking-tight text-gray-900">
+            Choose your plan
           </h2>
-          <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 px-2" style={{ color: '#1f2937' }}>
-            Subscribe today to access comprehensive, professional tax training videos designed to enhance your expertise.
+          <p className="text-base sm:text-lg md:text-xl mb-16 text-gray-600 max-w-2xl mx-auto font-light">
+            Access comprehensive professional tax training videos designed to enhance your expertise
           </p>
 
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto mb-6 sm:mb-8">
-            <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition flex flex-col">
-              <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Monthly</h3>
-              <div className="mb-4 sm:mb-6">
-                <span className="text-3xl sm:text-4xl font-bold" style={{ color: '#827546' }}>$18.99</span>
-                <span className="text-gray-600 text-sm sm:text-base">/mo</span>
+          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            <div className="group bg-white rounded-3xl p-8 shadow-sm border border-gray-200 hover:shadow-xl hover:border-gray-300 transition-all duration-300 flex flex-col">
+              <h3 className="text-2xl font-semibold mb-6 text-gray-900">Monthly</h3>
+              <div className="mb-8">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-5xl font-bold text-gray-900">$18.99</span>
+                  <span className="text-gray-500 text-lg font-light">/month</span>
+                </div>
               </div>
-              <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6 flex-grow">Charged once per month. Cancel anytime.</p>
+              <ul className="space-y-3 mb-8 flex-grow text-left">
+                <li className="flex items-start gap-3 text-gray-600">
+                  <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Full access to all courses</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-600">
+                  <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>New content every month</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-600">
+                  <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Cancel anytime</span>
+                </li>
+              </ul>
               <button
                 onClick={handleGuestSubscribeClick}
-                className="w-full px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-white font-semibold text-base sm:text-lg transition hover:scale-105 hover:shadow-xl"
-                style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
+                className="w-full py-4 rounded-xl text-gray-900 font-semibold text-base bg-gray-100 hover:bg-gray-200 transition-colors"
               >
-                SUBSCRIBE
+                Get Started
               </button>
             </div>
 
-            <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border-2 border-gray-200 hover:border-gray-300 transition relative flex flex-col">
-              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-red-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full">
-                BEST VALUE
+            <div className="group bg-gradient-to-b from-gray-900 to-black rounded-3xl p-8 shadow-2xl border border-gray-800 hover:shadow-3xl transition-all duration-300 flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl">
+                SAVE 43%
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: '#033a66' }}>Annually</h3>
-              <div className="mb-4 sm:mb-6">
-                <span className="text-3xl sm:text-4xl font-bold" style={{ color: '#827546' }}>$129.99</span>
-                <span className="text-gray-600 text-sm sm:text-base">/yr</span>
+              <h3 className="text-2xl font-semibold mb-6 text-white">Annual</h3>
+              <div className="mb-8">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-5xl font-bold text-white">$129.99</span>
+                  <span className="text-gray-400 text-lg font-light">/year</span>
+                </div>
+                <p className="text-gray-400 text-sm mt-2">Just $10.83/month</p>
               </div>
-              <div className="flex-grow">
-                <p className="text-gray-600 text-sm sm:text-base mb-2">Only $10.83 per month!</p>
-                <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6">Charged once per year. Cancel anytime.</p>
-              </div>
+              <ul className="space-y-3 mb-8 flex-grow text-left">
+                <li className="flex items-start gap-3 text-gray-300">
+                  <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Everything in Monthly</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-300">
+                  <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Save over $97 per year</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-300">
+                  <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Cancel anytime</span>
+                </li>
+              </ul>
               <button
                 onClick={handleGuestSubscribeClick}
-                className="w-full px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-white font-semibold text-base sm:text-lg transition hover:scale-105 hover:shadow-xl"
-                style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
+                className="w-full py-4 rounded-xl text-white font-semibold text-base bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 transition-colors"
               >
-                SUBSCRIBE
+                Get Started
               </button>
             </div>
           </div>
+
+          <p className="text-sm text-gray-500 mt-8">
+            All plans include unlimited access to our entire library
+          </p>
         </div>
       </div>
 
