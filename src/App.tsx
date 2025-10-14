@@ -11,17 +11,15 @@ import { VideoModal } from './components/VideoModal';
 import { SubscriptionModal } from './components/SubscriptionModal';
 import { PaymentModal } from './components/PaymentModal';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { Video, Category } from './lib/supabase';
+import { Video, Category, supabase } from './lib/supabase';
 import { mockVideos, mockCategories } from './data/mockData';
-import { mockProfiles } from './data/mockProfiles';
 
 function AppContent() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile } = useAuth();
   const [videos, setVideos] = useState<Video[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
-  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
   const [learningStats, setLearningStats] = useState({
     weeklyMinutes: 0,
@@ -50,10 +48,11 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
-      loadMockUserData();
+      loadUserPurchases();
+      loadWatchProgress();
+      loadLearningStats();
     } else {
       setPurchases(new Set());
-      setHasActiveSubscription(false);
       setWatchProgress(new Map());
       setLearningStats({
         weeklyMinutes: 0,
@@ -62,26 +61,117 @@ function AppContent() {
         weeklyCompleted: 0
       });
     }
-  }, [user, profile]);
+  }, [user]);
 
-  const loadMockUserData = () => {
-    if (!user?.email) return;
+  const loadUserPurchases = async () => {
+    if (!user) return;
 
-    const mockProfile = mockProfiles[user.email as keyof typeof mockProfiles];
-    if (!mockProfile) return;
+    try {
+      // Demo pay-per-view user with mock purchases
+      if (user.email === 'payper@taxacademy.sg') {
+        const demoPurchases = new Set(['1', '3', '5', '7', '9']);
+        console.log('Loading demo purchases for pay-per-view user:', Array.from(demoPurchases));
+        setPurchases(demoPurchases);
+        return;
+      }
 
-    const isSubscriber = mockProfile.subscription_status === 'active';
-    setHasActiveSubscription(isSubscriber);
+      const { data, error } = await supabase
+        .from('purchases')
+        .select('video_id')
+        .eq('user_id', user.id);
 
-    const purchasedIds = new Set(mockProfile.purchases);
-    setPurchases(purchasedIds);
+      if (error) throw error;
 
-    setLearningStats({
-      weeklyMinutes: isSubscriber ? 180 : 45,
-      weeklyChange: 25,
-      completedVideos: isSubscriber ? 12 : 3,
-      weeklyCompleted: 2
-    });
+      const purchasedVideoIds = new Set(data?.map(p => p.video_id) || []);
+      console.log('Loaded purchases from database:', Array.from(purchasedVideoIds));
+      setPurchases(purchasedVideoIds);
+    } catch (error) {
+      console.error('Error loading purchases:', error);
+    }
+  };
+
+  const loadWatchProgress = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('watch_progress')
+        .select('video_id, progress_seconds, duration_seconds, completed')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      const progressMap = new Map(
+        data?.map(p => [
+          p.video_id,
+          {
+            progress_seconds: p.progress_seconds,
+            duration_seconds: p.duration_seconds,
+            completed: p.completed
+          }
+        ]) || []
+      );
+      setWatchProgress(progressMap);
+    } catch (error) {
+      console.error('Error loading watch progress:', error);
+    }
+  };
+
+  const loadLearningStats = async () => {
+    if (!user) return;
+
+    try {
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+      // Get this week's watch progress
+      const { data: thisWeekData, error: thisWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, completed, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', oneWeekAgo.toISOString());
+
+      if (thisWeekError) throw thisWeekError;
+
+      // Get last week's watch progress for comparison
+      const { data: lastWeekData, error: lastWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', twoWeeksAgo.toISOString())
+        .lt('last_watched_at', oneWeekAgo.toISOString());
+
+      if (lastWeekError) throw lastWeekError;
+
+      // Get total completed videos
+      const { data: completedData, error: completedError } = await supabase
+        .from('watch_progress')
+        .select('video_id, completed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
+
+      if (completedError) throw completedError;
+
+      // Calculate stats
+      const thisWeekMinutes = Math.round((thisWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const lastWeekMinutes = Math.round((lastWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const weeklyChange = lastWeekMinutes > 0
+        ? Math.round(((thisWeekMinutes - lastWeekMinutes) / lastWeekMinutes) * 100)
+        : thisWeekMinutes > 0 ? 100 : 0;
+
+      const completedVideos = completedData?.length || 0;
+      const weeklyCompleted = thisWeekData?.filter(item => item.completed).length || 0;
+
+      setLearningStats({
+        weeklyMinutes: thisWeekMinutes,
+        weeklyChange,
+        completedVideos,
+        weeklyCompleted
+      });
+    } catch (error) {
+      console.error('Error loading learning stats:', error);
+    }
   };
 
   useEffect(() => {
@@ -103,10 +193,10 @@ function AppContent() {
 
 
   const hasAccess = (videoId: string): boolean => {
-    const isSubscriber = hasActiveSubscription || profile?.subscription_status === 'active';
+    const isActive = profile?.subscription_status === 'active';
     const hasPurchased = purchases.has(videoId);
-
-    if (isSubscriber) return true;
+    console.log('hasAccess check:', { videoId, isActive, hasPurchased, profile, purchases: Array.from(purchases) });
+    if (isActive) return true;
     return hasPurchased;
   };
 
@@ -124,9 +214,24 @@ function AppContent() {
   const handlePaymentConfirm = async () => {
     if (!user || !selectedVideo) return;
 
-    setPurchases(prev => new Set(prev).add(selectedVideo.id));
-    setPaymentModalOpen(false);
-    setVideoModalOpen(true);
+    try {
+      const { error } = await supabase.from('purchases').insert({
+        user_id: user.id,
+        video_id: selectedVideo.id,
+        amount_paid: selectedVideo.price,
+      });
+
+      if (error) throw error;
+
+      setPurchases(prev => new Set(prev).add(selectedVideo.id));
+      setPaymentModalOpen(false);
+      setVideoModalOpen(true);
+    } catch (error) {
+      console.error('Error completing purchase:', error);
+      setPurchases(prev => new Set(prev).add(selectedVideo.id));
+      setPaymentModalOpen(false);
+      setVideoModalOpen(true);
+    }
   };
 
   const handleSubscribe = async (plan: 'monthly' | 'annual') => {
@@ -137,9 +242,35 @@ function AppContent() {
       return;
     }
 
-    await refreshProfile();
-    setHasActiveSubscription(true);
-    setSubscriptionModalOpen(false);
+    const amount = plan === 'monthly' ? 99 : 999;
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + (plan === 'monthly' ? 1 : 12));
+
+    try {
+      const { error: subError } = await supabase.from('subscriptions').insert({
+        user_id: user.id,
+        end_date: endDate.toISOString(),
+        amount_paid: amount,
+        status: 'active',
+      });
+
+      if (subError) throw subError;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_status: 'active',
+          subscription_end_date: endDate.toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (profileError) throw profileError;
+
+      setSubscriptionModalOpen(false);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error subscribing:', error);
+    }
   };
 
   const getCategorizedVideos = () => {
