@@ -28,6 +28,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadVideos();
@@ -35,15 +36,26 @@ export default function HomeScreen({ navigation }: Props) {
 
   const loadVideos = async () => {
     try {
+      console.log('Loading videos...');
       const { data, error } = await supabase
         .from('videos')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Videos response:', { data, error });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        setError(error.message);
+        throw error;
+      }
+
+      console.log('Videos loaded:', data?.length);
       setVideos(data || []);
+      setError(null);
     } catch (error) {
       console.error('Error loading videos:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load videos');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -83,7 +95,28 @@ export default function HomeScreen({ navigation }: Props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {profile?.subscription_status !== 'active' && (
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading videos...</Text>
+          </View>
+        )}
+
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Error: {error}</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={loadVideos}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {!loading && !error && videos.length === 0 && (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No videos available</Text>
+          </View>
+        )}
+
+        {profile?.subscription_status !== 'active' && videos.length > 0 && (
           <TouchableOpacity
             style={styles.subscribeBanner}
             onPress={() => navigation.navigate('Subscription')}
@@ -252,5 +285,49 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#827546',
     fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#6b7280',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#dc2626',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#827546',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
   },
 });
