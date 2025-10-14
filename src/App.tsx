@@ -309,6 +309,64 @@ function AppContent() {
     return progress && !progress.completed && progress.progress_seconds > 0;
   }).slice(0, 6);
 
+  const getRecommendedVideos = () => {
+    if (!user) return [];
+
+    const watchedVideoIds = Array.from(watchProgress.keys());
+    const watchedVideos = filteredVideos.filter(v => watchedVideoIds.includes(v.id));
+    const completedVideos = watchedVideos.filter(v => watchProgress.get(v.id)?.completed);
+
+    const watchedCategories = new Map<string, number>();
+    watchedVideos.forEach(video => {
+      watchedCategories.set(
+        video.category_id,
+        (watchedCategories.get(video.category_id) || 0) + 1
+      );
+    });
+
+    const isSubscriber = profile?.subscription_status === 'active';
+
+    const unwatchedVideos = filteredVideos.filter(video => {
+      const hasWatched = watchProgress.has(video.id);
+      const isCompleted = watchProgress.get(video.id)?.completed;
+      return !hasWatched || !isCompleted;
+    });
+
+    const scoredVideos = unwatchedVideos.map(video => {
+      let score = 0;
+
+      const categoryWatchCount = watchedCategories.get(video.category_id) || 0;
+      score += categoryWatchCount * 10;
+
+      if (isSubscriber || purchases.has(video.id)) {
+        score += 5;
+      }
+
+      if (video.is_featured) score += 3;
+      if (video.is_new) score += 2;
+
+      score += (video.view_count / 1000);
+
+      if (watchedCategories.size > 0) {
+        const hasWatchedInCategory = watchedCategories.has(video.category_id);
+        if (hasWatchedInCategory) {
+          score += 8;
+        }
+      }
+
+      const similarVideos = completedVideos.filter(v => v.category_id === video.category_id);
+      score += similarVideos.length * 5;
+
+      return { video, score };
+    });
+
+    scoredVideos.sort((a, b) => b.score - a.score);
+
+    return scoredVideos.slice(0, 6).map(item => item.video);
+  };
+
+  const recommendedVideos = getRecommendedVideos();
+
   const handleGuestSubscribeClick = () => {
     setSubscriptionModalOpen(true);
   };
@@ -386,6 +444,22 @@ function AppContent() {
                   <ContinueWatchingRow
                     videos={continueWatchingVideos}
                     watchProgress={watchProgress}
+                    hasAccess={hasAccess}
+                    onClick={handleVideoClick}
+                  />
+                </div>
+              )}
+
+              {recommendedVideos.length > 0 && (
+                <div className="mb-10 px-4 sm:px-6 md:px-8">
+                  <div className="flex items-center gap-3 mb-5">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Recommended for You</h2>
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-semibold rounded-full">
+                      Based on your activity
+                    </span>
+                  </div>
+                  <VideoRow
+                    videos={recommendedVideos}
                     hasAccess={hasAccess}
                     onClick={handleVideoClick}
                   />
