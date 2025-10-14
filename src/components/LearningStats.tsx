@@ -1,11 +1,11 @@
-import { TrendingUp, Award, Clock } from 'lucide-react';
+import { Clock, Award, CreditCard, TrendingUp } from 'lucide-react';
 
 interface LearningStatsProps {
   weeklyMinutes: number;
   weeklyChange: number;
   completedVideos: number;
   weeklyCompleted: number;
-  subscriptionStatus: 'free' | 'active' | 'cancelled';
+  subscriptionStatus: string;
   onUpgrade: () => void;
 }
 
@@ -17,70 +17,83 @@ export function LearningStats({
   subscriptionStatus,
   onUpgrade
 }: LearningStatsProps) {
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
+  const isSubscribed = subscriptionStatus === 'active';
+
   return (
     <div className="mb-10 px-4 sm:px-6 md:px-8">
-      <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Your Progress</h2>
-            <p className="text-white/60 text-sm sm:text-base">Keep learning and improving</p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-              <p className="text-xs text-white/60">Plan</p>
-              <p className="text-white font-semibold">
-                {subscriptionStatus === 'active' ? 'Premium Member' : 'Free'}
-              </p>
+      <div className="mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          Your Learning Stats
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-blue-500/20 p-2.5 rounded-xl">
+              <Clock className="w-6 h-6 text-blue-400" />
             </div>
-            {subscriptionStatus !== 'active' && (
+            {weeklyChange !== 0 && (
+              <div className={`flex items-center space-x-1 text-xs font-semibold ${
+                weeklyChange > 0 ? 'text-green-400' : 'text-red-400'
+              }`}>
+                <TrendingUp className={`w-4 h-4 ${weeklyChange < 0 ? 'rotate-180' : ''}`} />
+                <span>{weeklyChange > 0 ? '+' : ''}{weeklyChange}%</span>
+              </div>
+            )}
+          </div>
+          <h3 className="text-white/60 text-xs font-medium uppercase tracking-wider mb-2">This Week</h3>
+          <p className="text-3xl font-bold text-white mb-1">
+            {formatTime(weeklyMinutes)}
+          </p>
+          <p className="text-white/50 text-sm">
+            {weeklyChange > 0 ? `+${Math.abs(weeklyChange)}% from last week` : weeklyChange < 0 ? `${weeklyChange}% from last week` : 'Same as last week'}
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-green-500/20 p-2.5 rounded-xl">
+              <Award className="w-6 h-6 text-green-400" />
+            </div>
+          </div>
+          <h3 className="text-white/60 text-xs font-medium uppercase tracking-wider mb-2">Completed</h3>
+          <p className="text-3xl font-bold text-white mb-1">
+            {completedVideos}
+          </p>
+          <p className="text-white/50 text-sm">
+            {weeklyCompleted > 0 ? `${weeklyCompleted} this week` : 'No completions yet'}
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300 sm:col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between mb-4">
+            <div className={`${isSubscribed ? 'bg-amber-500/20' : 'bg-gray-500/20'} p-2.5 rounded-xl`}>
+              <CreditCard className={`w-6 h-6 ${isSubscribed ? 'text-amber-400' : 'text-gray-400'}`} />
+            </div>
+            {!isSubscribed && (
               <button
                 onClick={onUpgrade}
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-blue-500/50"
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white rounded-lg text-xs font-semibold transition-colors"
               >
                 Upgrade
               </button>
             )}
           </div>
+          <h3 className="text-white/60 text-xs font-medium uppercase tracking-wider mb-2">Plan</h3>
+          <p className="text-3xl font-bold text-white mb-1 capitalize">
+            {isSubscribed ? 'Premium' : 'Free'}
+          </p>
+          <p className="text-white/50 text-sm">
+            {isSubscribed ? 'Unlimited access' : 'Limited access'}
+          </p>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
-            <div className="flex items-center justify-between mb-3">
-              <Clock className="w-8 h-8 text-blue-400" />
-              {weeklyChange !== 0 && (
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${weeklyChange > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                  {weeklyChange > 0 ? '+' : ''}{weeklyChange}%
-                </span>
-              )}
-            </div>
-            <p className="text-white/60 text-sm mb-1">This Week</p>
-            <p className="text-3xl font-bold text-white">{weeklyMinutes}<span className="text-lg text-white/60 ml-1">min</span></p>
-          </div>
-
-          <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
-            <div className="flex items-center justify-between mb-3">
-              <Award className="w-8 h-8 text-yellow-400" />
-            </div>
-            <p className="text-white/60 text-sm mb-1">Completed</p>
-            <p className="text-3xl font-bold text-white">{completedVideos}<span className="text-lg text-white/60 ml-1">total</span></p>
-          </div>
-
-          <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
-            <div className="flex items-center justify-between mb-3">
-              <TrendingUp className="w-8 h-8 text-green-400" />
-            </div>
-            <p className="text-white/60 text-sm mb-1">This Week</p>
-            <p className="text-3xl font-bold text-white">{weeklyCompleted}<span className="text-lg text-white/60 ml-1">videos</span></p>
-          </div>
-        </div>
-
-        {subscriptionStatus !== 'active' && (
-          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-            <p className="text-white/80 text-sm">
-              <span className="font-semibold">Limited access.</span> Upgrade to Premium for unlimited access to all videos.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
