@@ -15,11 +15,12 @@ import { Video, Category, supabase } from './lib/supabase';
 import { mockVideos, mockCategories } from './data/mockData';
 
 function AppContent() {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [videos, setVideos] = useState<Video[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
   const [learningStats, setLearningStats] = useState({
     weeklyMinutes: 0,
@@ -48,11 +49,13 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
+      checkActiveSubscription();
       loadUserPurchases();
       loadWatchProgress();
       loadLearningStats();
     } else {
       setPurchases(new Set());
+      setHasActiveSubscription(false);
       setWatchProgress(new Map());
       setLearningStats({
         weeklyMinutes: 0,
@@ -61,20 +64,53 @@ function AppContent() {
         weeklyCompleted: 0
       });
     }
-  }, [user]);
+  }, [user, profile]);
+
+  const checkActiveSubscription = async () => {
+    if (!user) return;
+
+    try {
+      const { data: subscriptions, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .gte('end_date', new Date().toISOString())
+        .order('end_date', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+
+      const hasActiveSub = subscriptions && subscriptions.length > 0;
+      setHasActiveSubscription(hasActiveSub);
+
+      console.log('Subscription check:', {
+        user: user.email,
+        hasActiveSub,
+        profileStatus: profile?.subscription_status,
+        subscriptionData: subscriptions
+      });
+
+      if (hasActiveSub && profile?.subscription_status !== 'active') {
+        await supabase
+          .from('profiles')
+          .update({ subscription_status: 'active' })
+          .eq('id', user.id);
+
+        await refreshProfile();
+      }
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
 
   const loadUserPurchases = async () => {
     if (!user) return;
 
     try {
-      // Demo pay-per-view user with mock purchases
-      if (user.email === 'payper@taxacademy.sg') {
-        const demoPurchases = new Set(['1', '3', '5', '7', '9']);
-        console.log('Loading demo purchases for pay-per-view user:', Array.from(demoPurchases));
-        setPurchases(demoPurchases);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('purchases')
         .select('video_id')
@@ -193,10 +229,10 @@ function AppContent() {
 
 
   const hasAccess = (videoId: string): boolean => {
-    const isActive = profile?.subscription_status === 'active';
+    const isSubscriber = hasActiveSubscription || profile?.subscription_status === 'active';
     const hasPurchased = purchases.has(videoId);
-    console.log('hasAccess check:', { videoId, isActive, hasPurchased, profile, purchases: Array.from(purchases) });
-    if (isActive) return true;
+
+    if (isSubscriber) return true;
     return hasPurchased;
   };
 
@@ -242,16 +278,23 @@ function AppContent() {
       return;
     }
 
-    const amount = plan === 'monthly' ? 99 : 999;
+    const amount = plan === 'monthly' ? 18.99 : 129.99;
+    const startDate = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + (plan === 'monthly' ? 1 : 12));
+    const nextBillingDate = new Date(endDate);
 
     try {
       const { error: subError } = await supabase.from('subscriptions').insert({
         user_id: user.id,
+        start_date: startDate.toISOString(),
         end_date: endDate.toISOString(),
+        next_billing_date: nextBillingDate.toISOString(),
         amount_paid: amount,
         status: 'active',
+        plan_type: plan,
+        auto_renew: true,
+        payment_method: 'credit_card',
       });
 
       if (subError) throw subError;
@@ -266,8 +309,9 @@ function AppContent() {
 
       if (profileError) throw profileError;
 
+      await refreshProfile();
+      setHasActiveSubscription(true);
       setSubscriptionModalOpen(false);
-      window.location.reload();
     } catch (error) {
       console.error('Error subscribing:', error);
     }
