@@ -31,7 +31,6 @@
     },
     "plugins": [
       "expo-av"
-    ],
-    "sdkVersion": "54.0.0"
+    ]
   }
 }
