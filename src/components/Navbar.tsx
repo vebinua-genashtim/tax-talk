@@ -1,4 +1,4 @@
-import { Search, User, LogOut } from 'lucide-react';
+import { Search, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useEffect } from 'react';
 
@@ -6,9 +6,10 @@ interface NavbarProps {
   onSearch: (query: string) => void;
   onAuthClick: () => void;
   onSubscribeClick?: () => void;
+  onAccountClick?: () => void;
 }
 
-export function Navbar({ onSearch, onAuthClick, onSubscribeClick }: NavbarProps) {
+export function Navbar({ onSearch, onAuthClick, onSubscribeClick, onAccountClick }: NavbarProps) {
   const { user, profile, signOut } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -80,6 +81,13 @@ export function Navbar({ onSearch, onAuthClick, onSubscribeClick }: NavbarProps)
               className="p-2 hover:bg-gray-100 rounded-full transition"
             >
               <Search className="w-5 h-5 text-gray-700" />
+            </button>
+
+            <button
+              onClick={onAccountClick}
+              className="p-2 hover:bg-gray-100 rounded-full transition"
+            >
+              <Settings className="w-5 h-5 text-gray-700" />
             </button>
 
             <button

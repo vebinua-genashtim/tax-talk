@@ -10,6 +10,7 @@ import { AuthModal } from './components/AuthModal';
 import { VideoModal } from './components/VideoModal';
 import { SubscriptionModal } from './components/SubscriptionModal';
 import { PaymentModal } from './components/PaymentModal';
+import { AccountManagement } from './components/AccountManagement';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Video, Category, supabase } from './lib/supabase';
 import { mockVideos, mockCategories } from './data/mockData';
@@ -35,6 +36,7 @@ function AppContent() {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [redirectToSubscription, setRedirectToSubscription] = useState(false);
 
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
@@ -339,6 +341,7 @@ function AppContent() {
           onSearch={setSearchQuery}
           onAuthClick={() => setAuthModalOpen(true)}
           onSubscribeClick={() => setSubscriptionModalOpen(true)}
+          onAccountClick={() => setAccountModalOpen(true)}
         />
 
         {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
@@ -488,6 +491,10 @@ function AppContent() {
           video={selectedVideo}
           onClose={() => setPaymentModalOpen(false)}
           onConfirm={handlePaymentConfirm}
+        />
+        <AccountManagement
+          isOpen={accountModalOpen}
+          onClose={() => setAccountModalOpen(false)}
         />
       </div>
     );
