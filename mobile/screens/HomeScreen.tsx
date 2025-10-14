@@ -29,6 +29,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('Initializing...');
 
   useEffect(() => {
     loadVideos();
@@ -36,26 +37,33 @@ export default function HomeScreen({ navigation }: Props) {
 
   const loadVideos = async () => {
     try {
+      setDebugInfo('Starting to load videos...');
       console.log('Loading videos...');
+
       const { data, error } = await supabase
         .from('videos')
         .select('*, category:categories(name)')
         .order('created_at', { ascending: false });
 
+      setDebugInfo(`Response received. Data: ${data?.length || 0} videos, Error: ${error?.message || 'none'}`);
       console.log('Videos response:', { data, error });
 
       if (error) {
         console.error('Supabase error:', error);
         setError(error.message);
+        setDebugInfo(`Error: ${error.message}`);
         throw error;
       }
 
       console.log('Videos loaded:', data?.length);
       setVideos(data || []);
       setError(null);
+      setDebugInfo(`Success! Loaded ${data?.length || 0} videos`);
     } catch (error) {
       console.error('Error loading videos:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load videos');
+      const errorMsg = error instanceof Error ? error.message : 'Failed to load videos';
+      setError(errorMsg);
+      setDebugInfo(`Catch block: ${errorMsg}`);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -88,6 +96,10 @@ export default function HomeScreen({ navigation }: Props) {
             {user ? 'Account' : 'Sign In'}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={{ padding: 16, backgroundColor: '#ffe6e6' }}>
+        <Text style={{ fontSize: 12, color: '#cc0000' }}>Debug: {debugInfo}</Text>
       </View>
 
       <ScrollView
