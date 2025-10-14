@@ -1,4 +1,4 @@
-import { Search, User, LogOut } from 'lucide-react';
+import { Search, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useEffect } from 'react';
 
@@ -6,9 +6,11 @@ interface NavbarProps {
   onSearch: (query: string) => void;
   onAuthClick: () => void;
   onSubscribeClick?: () => void;
+  onProfileClick?: () => void;
+  onAdvancedSearch?: () => void;
 }
 
-export function Navbar({ onSearch, onAuthClick, onSubscribeClick }: NavbarProps) {
+export function Navbar({ onSearch, onAuthClick, onSubscribeClick, onProfileClick, onAdvancedSearch }: NavbarProps) {
   const { user, profile, signOut } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -76,35 +78,33 @@ export function Navbar({ onSearch, onAuthClick, onSubscribeClick }: NavbarProps)
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowSearch(!showSearch)}
+              onClick={onAdvancedSearch}
               className="p-2 hover:bg-gray-100 rounded-full transition"
+              title="Search"
             >
               <Search className="w-5 h-5 text-gray-700" />
             </button>
 
+            {onProfileClick && (
+              <button
+                onClick={onProfileClick}
+                className="p-2 hover:bg-gray-100 rounded-full transition"
+                title="Profile Settings"
+              >
+                <Settings className="w-5 h-5 text-gray-700" />
+              </button>
+            )}
+
             <button
               onClick={handleSignOut}
               className="p-2 hover:bg-gray-100 rounded-full transition"
+              title="Sign Out"
             >
               <LogOut className="w-5 h-5 text-gray-700" />
             </button>
           </div>
         </div>
 
-        {showSearch && (
-          <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-            <div className="flex items-center bg-white rounded-full px-4 py-2 border border-gray-300">
-              <Search className="w-4 h-4 text-gray-500 mr-2" />
-              <input
-                type="text"
-                placeholder="Search videos..."
-                className="bg-transparent text-gray-900 placeholder-gray-500 outline-none w-full text-sm"
-                onChange={(e) => onSearch(e.target.value)}
-                autoFocus
-              />
-            </div>
-          </div>
-        )}
       </nav>
     );
   }
