@@ -642,7 +642,7 @@ function AppContent() {
         </div>
       </div>
 
-      <footer className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 px-3 sm:px-4 md:px-12" style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(3, 58, 102, 0.02) 2%, rgba(3, 56, 98, 0.05) 4%, rgba(3, 54, 95, 0.08) 6%, rgba(3, 52, 91, 0.12) 8%, rgba(3, 50, 88, 0.16) 10%, rgba(3, 48, 84, 0.20) 12%, rgba(3, 46, 81, 0.24) 14%, rgba(3, 44, 77, 0.28) 16%, rgba(3, 42, 74, 0.32) 18%, rgba(3, 40, 70, 0.36) 20%, rgba(3, 38, 67, 0.40) 22%, rgba(3, 36, 63, 0.44) 24%, rgba(3, 34, 60, 0.48) 26%, rgba(2, 32, 56, 0.52) 28%, rgba(2, 30, 53, 0.56) 30%, rgba(2, 28, 49, 0.62) 34%, rgba(2, 26, 45, 0.68) 38%, rgba(2, 24, 41, 0.74) 42%, rgba(2, 22, 37, 0.80) 46%, rgba(2, 20, 33, 0.86) 50%, rgba(2, 18, 29, 0.91) 56%, rgba(1, 16, 26, 0.94) 62%, rgba(1, 12, 20, 0.96) 72%, rgba(0, 8, 14, 0.98) 82%, rgba(0, 4, 8, 0.99) 92%, rgba(0, 0, 0, 1) 100%)', marginTop: '-8rem', paddingTop: '12rem' }}>
+      <footer className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 px-3 sm:px-4 md:px-12 bg-gradient-to-b from-transparent via-gray-900/50 to-black" style={{ marginTop: '-8rem', paddingTop: '12rem' }}>
         <div className="max-w-7xl mx-auto">
           <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12 md:mb-16">
             <div className="sm:col-span-2">
