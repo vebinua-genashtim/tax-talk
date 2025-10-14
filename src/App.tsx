@@ -424,8 +424,8 @@ function AppContent() {
                       onClick={() => setSelectedCategory(category.id)}
                       className="group relative aspect-video rounded-2xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all active:scale-[0.98]"
                     >
-                      <div className="absolute inset-0 flex items-center justify-center p-3">
-                        <h3 className="text-white font-semibold text-xs sm:text-sm text-center leading-tight">
+                      <div className="absolute inset-0 flex items-center justify-center p-2.5 sm:p-3">
+                        <h3 className="text-white font-medium text-[10px] sm:text-xs text-center leading-tight">
                           {category.name}
                         </h3>
                       </div>
@@ -551,8 +551,8 @@ function AppContent() {
                     className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 hover:scale-105 transition-transform duration-200 shadow-lg"
                   >
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
-                    <div className="absolute inset-0 flex items-center justify-center p-4">
-                      <h3 className="text-white font-bold text-sm sm:text-base md:text-lg text-center leading-tight drop-shadow-lg">
+                    <div className="absolute inset-0 flex items-center justify-center p-2.5 sm:p-3">
+                      <h3 className="text-white font-semibold text-[10px] sm:text-xs text-center leading-tight drop-shadow-lg">
                         {category.name}
                       </h3>
                     </div>
