@@ -50,20 +50,19 @@ export function VideoRow({ videos, hasAccess, onClick }: VideoRowProps) {
       {showLeftArrow && (
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{ marginLeft: '4px' }}
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all active:scale-95"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
       )}
 
       <div
         ref={scrollContainerRef}
-        className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-1"
+        className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {videos.map((video) => (
-          <div key={video.id} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[360px]">
+          <div key={video.id} className="flex-shrink-0 w-[260px] sm:w-[300px]">
             <VideoCard
               video={video}
               hasAccess={hasAccess(video.id)}
@@ -76,10 +75,9 @@ export function VideoRow({ videos, hasAccess, onClick }: VideoRowProps) {
       {showRightArrow && (
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/80 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{ marginRight: '4px' }}
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all active:scale-95"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       )}
     </div>

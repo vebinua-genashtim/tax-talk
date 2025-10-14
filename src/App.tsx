@@ -332,9 +332,9 @@ function AppContent() {
   }
 
   if (user) {
-    // Netflix-style UI for signed-in users
+    // iPhone-inspired UI for signed-in users
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-black">
         <Navbar
           onSearch={setSearchQuery}
           onAuthClick={() => setAuthModalOpen(true)}
@@ -343,7 +343,7 @@ function AppContent() {
 
         {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
 
-        <div className={searchQuery ? 'pt-16 sm:pt-20 pb-12 sm:pb-20' : 'pb-12 sm:pb-20 -mt-20 sm:-mt-32 relative z-10'}>
+        <div className={searchQuery ? 'pt-20 pb-12' : 'pb-12 -mt-24 sm:-mt-32 relative z-10'}>
           {searchQuery && filteredVideos.length === 0 && (
             <div className="text-center py-12 sm:py-20 px-4">
               <p className="text-white text-base sm:text-lg">No videos found matching "{searchQuery}"</p>
@@ -378,8 +378,8 @@ function AppContent() {
               />
 
               {continueWatchingVideos.length > 0 && (
-                <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Continue Watching</h2>
+                <div className="mb-6 px-4 sm:px-6">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Continue Watching</h2>
                   <ContinueWatchingRow
                     videos={continueWatchingVideos}
                     watchProgress={watchProgress}
@@ -390,8 +390,8 @@ function AppContent() {
               )}
 
               {purchases.size > 0 && (
-                <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">My Purchased Videos</h2>
+                <div className="mb-6 px-4 sm:px-6">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">My Purchased Videos</h2>
                   <VideoRow
                     videos={filteredVideos.filter(v => purchases.has(v.id))}
                     hasAccess={hasAccess}
@@ -400,33 +400,32 @@ function AppContent() {
                 </div>
               )}
 
-              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Featured Training</h2>
+              <div className="mb-6 px-4 sm:px-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Featured Training</h2>
                 <VideoRow videos={featuredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">New Releases</h2>
+              <div className="mb-6 px-4 sm:px-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">New Releases</h2>
                 <VideoRow videos={newVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Most Popular</h2>
+              <div className="mb-6 px-4 sm:px-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Most Popular</h2>
                 <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-12 sm:mb-16 md:mb-20 px-3 sm:px-4 md:px-12">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">Browse by Category</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+              <div className="mb-6 px-4 sm:px-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Browse by Category</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
                   {categories.map(category => (
                     <button
                       key={category.id}
                       onClick={() => setSelectedCategory(category.id)}
-                      className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 hover:scale-105 transition-transform duration-200"
+                      className="group relative aspect-video rounded-2xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all active:scale-[0.98]"
                     >
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <h3 className="text-white font-bold text-sm sm:text-base md:text-lg text-center leading-tight">
+                      <div className="absolute inset-0 flex items-center justify-center p-3">
+                        <h3 className="text-white font-semibold text-xs sm:text-sm text-center leading-tight">
                           {category.name}
                         </h3>
                       </div>

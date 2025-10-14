@@ -11,51 +11,51 @@ interface VideoCardProps {
 export function VideoCard({ video, hasAccess, onClick, progress }: VideoCardProps) {
   return (
     <div
-      className="cursor-pointer transition-all duration-200 active:scale-95 sm:hover:scale-105"
+      className="cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.02]"
       onClick={() => onClick(video)}
     >
-      <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden bg-gray-900 shadow-lg">
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-900 shadow-xl">
         <img
           src={video.thumbnail_url}
           alt={video.title}
           className="w-full h-full object-cover"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
         {!hasAccess && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <div className="bg-black/90 backdrop-blur-sm p-3 rounded-full">
-              <Lock className="w-7 h-7 text-white" />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-full">
+              <Lock className="w-6 h-6 text-white" />
             </div>
           </div>
         )}
 
-        <div className="absolute top-2 left-2 bg-black/75 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-md flex items-center gap-1">
+        <div className="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-xs font-medium px-2 py-1 rounded-lg flex items-center gap-1">
           <Clock className="w-3 h-3" />
           <span>{video.duration_minutes}m</span>
         </div>
 
         {video.is_new && (
-          <div className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-md" style={{ background: '#827546' }}>
+          <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-lg">
             NEW
           </div>
         )}
 
         {!hasAccess && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/75 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-md">
+          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
             ${video.price.toFixed(2)}
           </div>
         )}
 
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-2 sm:p-2.5">
-          <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 leading-snug">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-3">
+          <h3 className="font-semibold text-white text-sm line-clamp-2 leading-snug">
             {video.title}
           </h3>
           {progress !== undefined && progress > 0 && (
-            <div className="mt-1.5 w-full bg-gray-700 rounded-full h-1">
+            <div className="mt-2 w-full bg-white/20 rounded-full h-1 overflow-hidden">
               <div
-                className="bg-red-600 h-1 rounded-full transition-all"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 h-1 rounded-full transition-all"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>

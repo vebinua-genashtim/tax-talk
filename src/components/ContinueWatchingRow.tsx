@@ -10,7 +10,7 @@ interface ContinueWatchingRowProps {
 
 export function ContinueWatchingRow({ videos, watchProgress, hasAccess, onClick }: ContinueWatchingRowProps) {
   return (
-    <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {videos.map((video) => {
         const progress = watchProgress.get(video.id);
         const progressPercent = progress
@@ -18,7 +18,7 @@ export function ContinueWatchingRow({ videos, watchProgress, hasAccess, onClick 
           : 0;
 
         return (
-          <div key={video.id} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[360px]">
+          <div key={video.id} className="flex-shrink-0 w-[260px] sm:w-[300px]">
             <VideoCard
               video={video}
               hasAccess={hasAccess(video.id)}
