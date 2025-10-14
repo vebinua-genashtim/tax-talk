@@ -378,8 +378,8 @@ function AppContent() {
               />
 
               {continueWatchingVideos.length > 0 && (
-                <div className="mb-6 px-4 sm:px-6">
-                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Continue Watching</h2>
+                <div className="mb-10 px-4 sm:px-6 md:px-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-5 text-white tracking-tight">Continue Watching</h2>
                   <ContinueWatchingRow
                     videos={continueWatchingVideos}
                     watchProgress={watchProgress}
@@ -390,8 +390,8 @@ function AppContent() {
               )}
 
               {purchases.size > 0 && (
-                <div className="mb-6 px-4 sm:px-6">
-                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">My Purchased Videos</h2>
+                <div className="mb-10 px-4 sm:px-6 md:px-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-5 text-white tracking-tight">My Purchased Videos</h2>
                   <VideoRow
                     videos={filteredVideos.filter(v => purchases.has(v.id))}
                     hasAccess={hasAccess}
@@ -400,32 +400,32 @@ function AppContent() {
                 </div>
               )}
 
-              <div className="mb-6 px-4 sm:px-6">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Featured Training</h2>
+              <div className="mb-10 px-4 sm:px-6 md:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-5 text-white tracking-tight">Featured Training</h2>
                 <VideoRow videos={featuredVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-6 px-4 sm:px-6">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">New Releases</h2>
+              <div className="mb-10 px-4 sm:px-6 md:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-5 text-white tracking-tight">New Releases</h2>
                 <VideoRow videos={newVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-6 px-4 sm:px-6">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Most Popular</h2>
+              <div className="mb-10 px-4 sm:px-6 md:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-5 text-white tracking-tight">Most Popular</h2>
                 <VideoRow videos={popularVideos} hasAccess={hasAccess} onClick={handleVideoClick} />
               </div>
 
-              <div className="mb-6 px-4 sm:px-6">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Browse by Category</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+              <div className="mb-12 px-4 sm:px-6 md:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-white tracking-tight">Browse by Category</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                   {categories.map(category => (
                     <button
                       key={category.id}
                       onClick={() => setSelectedCategory(category.id)}
-                      className="group relative aspect-video rounded-2xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                      className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 hover:from-white/20 hover:to-white/10 transition-all duration-300"
                     >
-                      <div className="absolute inset-0 flex items-center justify-center p-3">
-                        <h3 className="text-white font-semibold text-sm text-center leading-tight">
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <h3 className="text-white font-semibold text-sm sm:text-base text-center leading-tight">
                           {category.name}
                         </h3>
                       </div>
@@ -437,19 +437,22 @@ function AppContent() {
           )}
 
           {selectedCategory && (
-            <div className="px-3 sm:px-4 md:px-12">
-              <div className="mb-4 sm:mb-6">
+            <div className="px-4 sm:px-6 md:px-8">
+              <div className="mb-6">
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className="text-white hover:text-gray-300 transition flex items-center gap-2 text-sm sm:text-base"
+                  className="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium"
                 >
-                  <span>←</span> Back to All Videos
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to All Videos
                 </button>
               </div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-white tracking-tight">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {filteredVideos.map(video => (
                   <VideoCard
                     key={video.id}
