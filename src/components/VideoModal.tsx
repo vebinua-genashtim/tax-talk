@@ -44,14 +44,15 @@ export function VideoModal({ isOpen, video, onClose, hasAccess, onPurchase }: Vi
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4">
-      <div className="bg-white rounded-lg max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-5xl w-full my-auto">
         <div className="relative">
           <button
             onClick={onClose}
-            className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-1.5 sm:p-2 rounded-full transition"
+            className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 bg-black/60 hover:bg-black/80 active:bg-black text-white p-2 sm:p-2.5 rounded-full transition touch-manipulation"
+            aria-label="Close video"
           >
-            <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            <X className="w-6 h-6 sm:w-6 sm:h-6" />
           </button>
 
           <div className="relative">
@@ -120,7 +121,7 @@ export function VideoModal({ isOpen, video, onClose, hasAccess, onPurchase }: Vi
                   </div>
                   <button
                     onClick={() => onPurchase(video)}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2 rounded text-white font-semibold transition hover:scale-105 whitespace-nowrap shadow-lg text-sm sm:text-base"
+                    className="w-full sm:w-auto px-4 sm:px-6 py-3 rounded text-white font-semibold transition active:scale-95 whitespace-nowrap shadow-lg text-sm sm:text-base touch-manipulation"
                     style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
                   >
                     Buy Access

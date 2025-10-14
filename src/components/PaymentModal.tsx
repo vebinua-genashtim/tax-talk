@@ -25,11 +25,12 @@ export function PaymentModal({ isOpen, video, onClose, onConfirm }: PaymentModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-8 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 sm:p-8 relative my-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 active:text-gray-900 p-1 touch-manipulation"
+          aria-label="Close"
         >
           <X className="w-6 h-6" />
         </button>
@@ -95,7 +96,7 @@ export function PaymentModal({ isOpen, video, onClose, onConfirm }: PaymentModal
           <button
             type="submit"
             disabled={processing}
-            className="w-full py-3 rounded text-white font-semibold transition hover:scale-105 disabled:opacity-50 shadow-lg"
+            className="w-full py-3 rounded text-white font-semibold transition active:scale-95 disabled:opacity-50 shadow-lg touch-manipulation"
             style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)', boxShadow: '0 4px 15px rgba(130, 117, 70, 0.4)' }}
           >
             {processing ? 'Processing...' : `Pay $${video.price.toFixed(2)}`}

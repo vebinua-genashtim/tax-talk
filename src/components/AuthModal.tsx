@@ -99,11 +99,12 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-4 sm:p-6 md:p-8 relative max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-2xl w-full p-4 sm:p-6 md:p-8 relative my-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 active:text-gray-900 p-1 touch-manipulation"
+          aria-label="Close"
         >
           <X className="w-6 h-6" />
         </button>
@@ -221,7 +222,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded text-white font-semibold transition hover:scale-105 disabled:opacity-50 shadow-lg"
+              className="w-full py-3 rounded text-white font-semibold transition active:scale-95 disabled:opacity-50 shadow-lg touch-manipulation"
               style={{ background: 'linear-gradient(135deg, #033a66 0%, #044d87 100%)', boxShadow: '0 4px 15px rgba(3, 58, 102, 0.3)' }}
             >
               {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}

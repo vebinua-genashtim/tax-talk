@@ -48,20 +48,53 @@
     display: none;
   }
 
+  /* Touch-friendly interactions */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .active\:scale-98:active {
+    transform: scale(0.98);
+  }
+
   /* Smooth scrolling for mobile */
-  @media (max-width: 640px) {
-    .overflow-x-auto {
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
-    }
+  .overflow-x-auto,
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 
   /* Improved touch targets for mobile */
   @media (max-width: 640px) {
-    button {
+    button:not(.no-min-size) {
       min-height: 44px;
       min-width: 44px;
     }
+
+    a:not(.no-min-size) {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  /* Prevent text selection on interactive elements */
+  button,
+  .video-card,
+  .clickable {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Smooth transitions for touch feedback */
+  button,
+  a,
+  [role="button"] {
+    transition-property: transform, background-color, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 

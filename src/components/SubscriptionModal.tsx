@@ -29,11 +29,12 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-4">
-      <div className="bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full relative shadow-2xl max-h-[95vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full relative shadow-2xl my-auto">
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition z-10"
+          className="absolute top-4 sm:top-6 right-4 sm:right-6 text-gray-400 hover:text-gray-600 active:text-gray-800 transition z-10 p-1 touch-manipulation"
+          aria-label="Close"
         >
           <X className="w-6 h-6" />
         </button>
@@ -186,7 +187,7 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
                 <button
                   type="button"
                   onClick={() => setSelectedPlan('monthly')}
-                  className="w-full p-4 rounded-xl border-2 transition text-left"
+                  className="w-full p-4 rounded-xl border-2 transition text-left touch-manipulation active:scale-98"
                   style={{
                     borderColor: selectedPlan === 'monthly' ? '#033a66' : '#e5e7eb',
                     backgroundColor: selectedPlan === 'monthly' ? '#f0f4f8' : 'transparent'
@@ -214,7 +215,7 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
                 <button
                   type="button"
                   onClick={() => setSelectedPlan('annual')}
-                  className="w-full p-4 rounded-xl border-2 transition text-left relative"
+                  className="w-full p-4 rounded-xl border-2 transition text-left relative touch-manipulation active:scale-98"
                   style={{
                     borderColor: selectedPlan === 'annual' ? '#827546' : '#e5e7eb',
                     backgroundColor: selectedPlan === 'annual' ? '#faf9f6' : 'transparent'
@@ -285,7 +286,7 @@ export function SubscriptionModal({ isOpen, onClose, onSubscribe }: Subscription
               </div>
               <button
                 type="submit"
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-white font-semibold transition hover:opacity-90 shadow-lg text-sm"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-white font-semibold transition active:scale-95 shadow-lg text-sm touch-manipulation"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
               >
                 Upgrade to Plus

@@ -183,22 +183,22 @@ export function VideoPlayer({ videoUrl, posterUrl, videoId, onTimeUpdate }: Vide
       </video>
 
       {showControls && !isPlaying && (
-        <div className="absolute inset-0 flex items-end justify-between bg-black/50 px-8 pb-8">
-          <div className="text-left">
+        <div className="absolute inset-0 flex items-end justify-between bg-black/50 px-4 sm:px-8 pb-4 sm:pb-8">
+          <div className="text-left w-full sm:w-auto">
             {!user ? (
               <button
                 onClick={() => handlePlay(true)}
-                className="px-6 py-3 rounded-lg text-white font-semibold text-base transition hover:scale-105 flex items-center gap-2 shadow-xl"
+                className="px-5 sm:px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base transition active:scale-95 flex items-center justify-center gap-2 shadow-xl w-full sm:w-auto touch-manipulation"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
               >
                 <Play className="w-5 h-5 fill-current" />
                 Watch Preview
               </button>
             ) : hasStarted && !isCompleted ? (
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                 <button
                   onClick={handleResume}
-                  className="px-6 py-3 rounded-lg text-white font-semibold text-base transition hover:scale-105 flex items-center gap-2 shadow-xl"
+                  className="px-5 sm:px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base transition active:scale-95 flex items-center justify-center gap-2 shadow-xl touch-manipulation"
                   style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
                 >
                   <Play className="w-5 h-5 fill-current" />
@@ -206,21 +206,21 @@ export function VideoPlayer({ videoUrl, posterUrl, videoId, onTimeUpdate }: Vide
                 </button>
                 <button
                   onClick={handleWatchFromStart}
-                  className="px-5 py-3 rounded-lg text-white font-medium text-base transition hover:scale-105 flex items-center gap-2 bg-white/20 backdrop-blur-sm hover:bg-white/30"
+                  className="px-4 sm:px-5 py-3 rounded-lg text-white font-medium text-sm sm:text-base transition active:scale-95 flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm active:bg-white/30 touch-manipulation"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Watch from Start
                 </button>
               </div>
             ) : isCompleted ? (
-              <div className="flex flex-col gap-4">
-                <div className="bg-green-500/20 backdrop-blur-sm rounded-lg px-6 py-3 mb-2">
-                  <p className="text-white font-semibold">Video completed!</p>
-                  <p className="text-white/80 text-sm">Watch again?</p>
+              <div className="flex flex-col gap-4 w-full sm:w-auto">
+                <div className="bg-green-500/20 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-3 mb-2">
+                  <p className="text-white font-semibold text-sm sm:text-base">Video completed!</p>
+                  <p className="text-white/80 text-xs sm:text-sm">Watch again?</p>
                 </div>
                 <button
                   onClick={handleWatchFromStart}
-                  className="px-6 py-3 rounded-lg text-white font-semibold text-base transition hover:scale-105 flex items-center gap-2 shadow-xl"
+                  className="px-5 sm:px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base transition active:scale-95 flex items-center justify-center gap-2 shadow-xl touch-manipulation"
                   style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
                 >
                   <RotateCcw className="w-5 h-5" />
@@ -230,7 +230,7 @@ export function VideoPlayer({ videoUrl, posterUrl, videoId, onTimeUpdate }: Vide
             ) : (
               <button
                 onClick={() => handlePlay(true)}
-                className="px-6 py-3 rounded-lg text-white font-semibold text-base transition hover:scale-105 flex items-center gap-2 shadow-xl"
+                className="px-5 sm:px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base transition active:scale-95 flex items-center justify-center gap-2 shadow-xl w-full sm:w-auto touch-manipulation"
                 style={{ background: 'linear-gradient(135deg, #827546 0%, #a08f5a 100%)' }}
               >
                 <Play className="w-5 h-5 fill-current" />
