@@ -14,11 +14,16 @@ export function Hero({ video, onPlay, onSubscribe, isSubscribed, isLoggedIn }: H
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
-      <img
-        src="/hero-page.png"
-        alt="Tax Professional"
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
         className="absolute inset-0 w-full h-full object-cover"
-      />
+        poster="/hero-page.png"
+      >
+        <source src="https://esg-talent.com/jenn/sample_tax1.mp4" type="video/mp4" />
+      </video>
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40" />
 
       <div className="relative h-full flex items-center px-4 sm:px-6 md:px-12 lg:px-16">
