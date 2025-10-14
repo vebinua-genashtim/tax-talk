@@ -642,47 +642,67 @@ function AppContent() {
         </div>
       </div>
 
-      <footer className="relative pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 px-3 sm:px-4 md:px-12 bg-gradient-to-b from-transparent via-gray-900/50 to-black" style={{ marginTop: '-8rem', paddingTop: '12rem' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12 md:mb-16">
-            <div className="sm:col-span-2">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Tax Academy Singapore</h3>
-              <p className="text-white text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
-                Leading provider of professional tax training and certification programs for accounting professionals across Singapore and beyond.
-              </p>
-            </div>
+      <footer className="relative mt-20 sm:mt-32 bg-black border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12">
             <div>
-              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Platform</h4>
-              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                <li><a href="#browse" className="text-white hover:text-gray-200 transition">Browse Videos</a></li>
-                <li><a href="#pricing" className="text-white hover:text-gray-200 transition">Pricing</a></li>
-                <li><a href="#subscribe" className="text-white hover:text-gray-200 transition">Subscribe</a></li>
-                <li><a href="#about" className="text-white hover:text-gray-200 transition">About Us</a></li>
+              <h4 className="text-white/60 font-medium mb-4 text-xs uppercase tracking-wider">Platform</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#browse" className="text-white/80 hover:text-white transition-colors">Browse Videos</a></li>
+                <li><a href="#pricing" className="text-white/80 hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#subscribe" className="text-white/80 hover:text-white transition-colors">Subscribe</a></li>
+                <li><a href="#about" className="text-white/80 hover:text-white transition-colors">About Us</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Support</h4>
-              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                <li><a href="#help" className="text-white hover:text-gray-200 transition">Help Center</a></li>
-                <li><a href="#contact" className="text-white hover:text-gray-200 transition">Contact Us</a></li>
-                <li><a href="#faq" className="text-white hover:text-gray-200 transition">FAQ</a></li>
+              <h4 className="text-white/60 font-medium mb-4 text-xs uppercase tracking-wider">Programs</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#income" className="text-white/80 hover:text-white transition-colors">Income Tax</a></li>
+                <li><a href="#gst" className="text-white/80 hover:text-white transition-colors">GST</a></li>
+                <li><a href="#international" className="text-white/80 hover:text-white transition-colors">International Tax</a></li>
+                <li><a href="#advanced" className="text-white/80 hover:text-white transition-colors">Advanced Programs</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Legal</h4>
-              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                <li><a href="#terms" className="text-white hover:text-gray-200 transition">Terms of Service</a></li>
-                <li><a href="#privacy" className="text-white hover:text-gray-200 transition">Privacy Policy</a></li>
-                <li><a href="#cookies" className="text-white hover:text-gray-200 transition">Cookie Policy</a></li>
+              <h4 className="text-white/60 font-medium mb-4 text-xs uppercase tracking-wider">Support</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#help" className="text-white/80 hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="#contact" className="text-white/80 hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="#faq" className="text-white/80 hover:text-white transition-colors">FAQ</a></li>
+                <li><a href="#account" className="text-white/80 hover:text-white transition-colors">Account</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white/60 font-medium mb-4 text-xs uppercase tracking-wider">Legal</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#terms" className="text-white/80 hover:text-white transition-colors">Terms of Use</a></li>
+                <li><a href="#privacy" className="text-white/80 hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="#cookies" className="text-white/80 hover:text-white transition-colors">Cookie Preferences</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-600/40 pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-white gap-4">
-            <p className="text-center sm:text-left">&copy; 2025 Tax Academy Singapore. All rights reserved.</p>
-            <div className="flex gap-4 sm:gap-6">
-              <a href="#" className="hover:text-gray-300 transition">LinkedIn</a>
-              <a href="#" className="hover:text-gray-300 transition">Twitter</a>
-              <a href="#" className="hover:text-gray-300 transition">YouTube</a>
+
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pt-8 border-t border-white/10">
+            <div className="flex flex-col gap-2">
+              <p className="text-white/60 text-xs">Questions? Contact us.</p>
+              <p className="text-white/40 text-xs">&copy; 2025 Tax Academy Singapore</p>
+            </div>
+            <div className="flex gap-4">
+              <a href="#" className="text-white/60 hover:text-white transition-colors" aria-label="LinkedIn">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </a>
+              <a href="#" className="text-white/60 hover:text-white transition-colors" aria-label="Twitter">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a href="#" className="text-white/60 hover:text-white transition-colors" aria-label="YouTube">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
