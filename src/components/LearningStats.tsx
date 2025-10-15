@@ -7,6 +7,7 @@ interface LearningStatsProps {
   weeklyCompleted: number;
   subscriptionStatus: string;
   onUpgrade: () => void;
+  hasPurchases?: boolean;
 }
 
 export function LearningStats({
@@ -15,7 +16,8 @@ export function LearningStats({
   completedVideos,
   weeklyCompleted,
   subscriptionStatus,
-  onUpgrade
+  onUpgrade,
+  hasPurchases = false
 }: LearningStatsProps) {
   const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -24,6 +26,8 @@ export function LearningStats({
   };
 
   const isSubscribed = subscriptionStatus === 'active';
+  const isPayPerView = !isSubscribed && hasPurchases;
+  const displayPlan = isSubscribed ? 'Premium' : isPayPerView ? 'Pay-Per-View' : 'Free';
 
   return (
     <div className="mb-10 px-4 sm:px-6 md:px-8">
@@ -88,10 +92,10 @@ export function LearningStats({
           </div>
           <h3 className="text-white/60 text-xs font-medium uppercase tracking-wider mb-2">Plan</h3>
           <p className="text-3xl font-bold text-white mb-1 capitalize">
-            {isSubscribed ? 'Premium' : 'Free'}
+            {displayPlan}
           </p>
           <p className="text-white/50 text-sm">
-            {isSubscribed ? 'Unlimited access' : 'Limited access'}
+            {isSubscribed ? 'Unlimited access' : isPayPerView ? 'Selected videos' : 'Limited access'}
           </p>
         </div>
       </div>

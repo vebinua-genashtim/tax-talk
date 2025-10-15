@@ -7,9 +7,10 @@ interface NavbarProps {
   onAuthClick: () => void;
   onSubscribeClick?: () => void;
   onAccountClick?: () => void;
+  hasPurchases?: boolean;
 }
 
-export function Navbar({ onSearch, onAuthClick, onSubscribeClick, onAccountClick }: NavbarProps) {
+export function Navbar({ onSearch, onAuthClick, onSubscribeClick, onAccountClick, hasPurchases = false }: NavbarProps) {
   const { user, profile, signOut } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -51,7 +52,7 @@ export function Navbar({ onSearch, onAuthClick, onSubscribeClick, onAccountClick
               <span className="px-2 py-0.5 rounded-full font-medium text-xs bg-green-100 text-green-700">
                 Subscriber
               </span>
-            ) : profile?.subscription_status === 'free' ? (
+            ) : hasPurchases ? (
               <>
                 <span className="px-2 py-0.5 rounded-full font-medium text-xs bg-blue-100 text-blue-700">
                   Pay-Per-View

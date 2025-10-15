@@ -400,6 +400,7 @@ function AppContent() {
           onAuthClick={() => setAuthModalOpen(true)}
           onSubscribeClick={() => setSubscriptionModalOpen(true)}
           onAccountClick={() => setAccountModalOpen(true)}
+          hasPurchases={purchases.size > 0}
         />
 
         {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
@@ -436,6 +437,7 @@ function AppContent() {
                 weeklyCompleted={learningStats.weeklyCompleted}
                 subscriptionStatus={profile?.subscription_status || 'free'}
                 onUpgrade={() => setSubscriptionModalOpen(true)}
+                hasPurchases={purchases.size > 0}
               />
 
               {continueWatchingVideos.length > 0 && (
