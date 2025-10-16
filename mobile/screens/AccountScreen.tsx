@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,53 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation }: Props) {
   const { user, profile, loading, signOut } = useAuth();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('AccountScreen focused - Auth State:', {
+        hasUser: !!user,
+        userEmail: user?.email,
+        hasProfile: !!profile,
+        profileStatus: profile?.subscription_status,
+        loading: loading,
+      });
+
+      // Force refresh auth state when screen comes into focus
+      const refreshAuth = async () => {
+        if (!user && !loading) {
+          setIsRefreshing(true);
+          const { data } = await supabase.auth.getSession();
+          console.log('Manual session check:', data.session ? 'Has session' : 'No session');
+          setIsRefreshing(false);
+        }
+      };
+
+      refreshAuth();
+    }, [user, profile, loading])
+  );
+
+  useEffect(() => {
+    console.log('AccountScreen - Auth State Updated:', {
+      hasUser: !!user,
+      userEmail: user?.email,
+      hasProfile: !!profile,
+      profileStatus: profile?.subscription_status,
+      loading: loading,
+    });
+  }, [user, profile, loading]);
 
   const handleSignOut = () => {
     Alert.alert(
@@ -34,26 +72,34 @@ export default function AccountScreen({ navigation }: Props) {
     );
   };
 
-  if (loading) {
+  if (loading || isRefreshing) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Loading...</Text>
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#827546" />
+        <Text style={[styles.errorText, { marginTop: 16 }]}>Loading...</Text>
       </View>
     );
   }
 
   if (!user) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, styles.centerContent]}>
         <Text style={styles.errorText}>Please sign in to view your account</Text>
+        <TouchableOpacity
+          style={styles.signInButton}
+          onPress={() => navigation.navigate('Auth')}
+        >
+          <Text style={styles.signInButtonText}>Sign In</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   if (!profile) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Loading profile...</Text>
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#827546" />
+        <Text style={[styles.errorText, { marginTop: 16 }]}>Loading profile...</Text>
       </View>
     );
   }
@@ -133,6 +179,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9fafb',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  signInButton: {
+    backgroundColor: '#827546',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  signInButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   content: {
     padding: 16,
