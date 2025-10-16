@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Tax Academy Singapore",
-    "slug": "tax-academy-sg",
+    "name": "Tax Talk Pro",
+    "slug": "tax-talk-pro",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -10,10 +10,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.taxacademy.sg"
+      "bundleIdentifier": "com.taxtalkpro.app"
     },
     "android": {
-      "package": "com.taxacademy.sg",
+      "package": "com.taxtalkpro.app",
       "adaptiveIcon": {
         "backgroundColor": "#033a66"
       }
