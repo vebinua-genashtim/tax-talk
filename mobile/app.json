@@ -13,10 +13,14 @@
       "bundleIdentifier": "com.taxacademy.sg"
     },
     "android": {
-      "package": "com.taxacademy.sg"
+      "package": "com.taxacademy.sg",
+      "adaptiveIcon": {
+        "backgroundColor": "#033a66"
+      }
     },
     "web": {
       "bundler": "metro"
-    }
+    },
+    "plugins": []
   }
 }
