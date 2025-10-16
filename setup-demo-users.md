@@ -1,6 +1,6 @@
-# Demo Users Setup Instructions
+# Demo Users Setup Instructions for Tax Talk Pro
 
-The platform has three demo accounts pre-configured. Follow these steps to set them up.
+The platform has demo accounts that work across BOTH web and mobile apps. These accounts share the same database, so logging in with the same credentials on web or mobile gives you the same experience.
 
 ## Quick Setup (Recommended)
 
@@ -37,19 +37,19 @@ If you see "Invalid login credentials" error, email confirmation is likely enabl
 3. Create each user with these details:
 
 #### User 1: Free Tier
-- **Email:** `free@taxacademy.sg`
+- **Email:** `free@taxtalkpro.com`
 - **Password:** `demo123456`
 - **Auto Confirm User:** ✓ (checked)
 - Click **Create user**
 
 #### User 2: Pay-Per-View
-- **Email:** `payper@taxacademy.sg`
+- **Email:** `payper@taxtalkpro.com`
 - **Password:** `demo123456`
 - **Auto Confirm User:** ✓ (checked)
 - Click **Create user**
 
-#### User 3: Subscriber
-- **Email:** `subscriber@taxacademy.sg`
+#### User 3: Subscriber (RECOMMENDED FOR DEMOS)
+- **Email:** `subscriber@taxtalkpro.com`
 - **Password:** `demo123456`
 - **Auto Confirm User:** ✓ (checked)
 - Click **Create user**
@@ -64,7 +64,7 @@ After creating the users in Supabase Dashboard:
 ```sql
 -- First, get the user IDs
 SELECT id, email FROM auth.users
-WHERE email IN ('free@taxacademy.sg', 'payper@taxacademy.sg', 'subscriber@taxacademy.sg');
+WHERE email IN ('free@taxtalkpro.com', 'payper@taxtalkpro.com', 'subscriber@taxtalkpro.com');
 
 -- Create profiles for all users
 INSERT INTO profiles (id, email, full_name, subscription_status, is_admin)
@@ -72,19 +72,19 @@ SELECT
   id,
   email,
   CASE
-    WHEN email = 'free@taxacademy.sg' THEN 'Free User'
-    WHEN email = 'payper@taxacademy.sg' THEN 'Pay-Per-View User'
-    WHEN email = 'subscriber@taxacademy.sg' THEN 'Subscriber'
+    WHEN email = 'free@taxtalkpro.com' THEN 'Free User'
+    WHEN email = 'payper@taxtalkpro.com' THEN 'Pay-Per-View User'
+    WHEN email = 'subscriber@taxtalkpro.com' THEN 'Subscriber'
   END as full_name,
   'free' as subscription_status,
   false as is_admin
 FROM auth.users
-WHERE email IN ('free@taxacademy.sg', 'payper@taxacademy.sg', 'subscriber@taxacademy.sg')
+WHERE email IN ('free@taxtalkpro.com', 'payper@taxtalkpro.com', 'subscriber@taxtalkpro.com')
 ON CONFLICT (id) DO NOTHING;
 
 -- Add purchases for pay-per-view user
 WITH payper_user AS (
-  SELECT id FROM auth.users WHERE email = 'payper@taxacademy.sg'
+  SELECT id FROM auth.users WHERE email = 'payper@taxtalkpro.com'
 ),
 first_videos AS (
   SELECT id, price FROM videos ORDER BY created_at LIMIT 2
@@ -96,7 +96,7 @@ ON CONFLICT (user_id, video_id) DO NOTHING;
 
 -- Add subscription for subscriber user
 WITH subscriber_user AS (
-  SELECT id FROM auth.users WHERE email = 'subscriber@taxacademy.sg'
+  SELECT id FROM auth.users WHERE email = 'subscriber@taxtalkpro.com'
 )
 INSERT INTO subscriptions (user_id, end_date, amount_paid, status)
 SELECT
@@ -113,7 +113,7 @@ SET
   subscription_status = 'active',
   subscription_end_date = NOW() + INTERVAL '1 year'
 WHERE id IN (
-  SELECT id FROM auth.users WHERE email = 'subscriber@taxacademy.sg'
+  SELECT id FROM auth.users WHERE email = 'subscriber@taxtalkpro.com'
 );
 ```
 
@@ -121,29 +121,56 @@ WHERE id IN (
 
 All three accounts use the same password: **demo123456**
 
-- **Free User:** free@taxacademy.sg
+These credentials work on BOTH web and mobile apps:
+
+- **Free User:** free@taxtalkpro.com
   - Access: Trailers only
+  - Works on: Web & Mobile
 
-- **Pay-Per-View User:** payper@taxacademy.sg
+- **Pay-Per-View User:** payper@taxtalkpro.com
   - Access: 2 purchased videos + trailers for others
+  - Works on: Web & Mobile
 
-- **Subscriber:** subscriber@taxacademy.sg
+- **Subscriber (BEST FOR DEMOS):** subscriber@taxtalkpro.com
   - Access: All videos (unlimited)
+  - Works on: Web & Mobile
+  - Recommended for presentations
 
 ## Testing Each User Type
 
-### Free User (free@taxacademy.sg)
+### Free User (free@taxtalkpro.com)
 - Can only watch trailers/previews
 - Sees "Purchase Now" button on all videos
 - Cannot access full video content
+- Same experience on web and mobile
 
-### Pay-Per-View User (payper@taxacademy.sg)
+### Pay-Per-View User (payper@taxtalkpro.com)
 - Can watch full versions of the 2 purchased videos
 - Sees trailers for unpurchased videos
 - Can purchase additional videos
+- Same experience on web and mobile
 
-### Subscriber (subscriber@taxacademy.sg)
+### Subscriber (subscriber@taxtalkpro.com) ⭐ RECOMMENDED
 - Has unlimited access to all videos
 - Can watch any video in full
 - No purchase buttons shown
 - Green "Active Subscription" badge displayed
+- Same experience on web and mobile
+- Perfect for presentations
+
+## Cross-Platform Testing
+
+To verify that accounts work across platforms:
+
+1. **Login on Web:** Use subscriber@taxtalkpro.com / demo123456
+2. **Start watching a video** and note your progress
+3. **Login on Mobile:** Use the SAME credentials
+4. **Check your account** - subscription status should match
+5. **View the same video** - you should see your watch history
+
+Both platforms now share:
+- User accounts
+- Subscription status
+- Watch history
+- Purchases
+- All user data
