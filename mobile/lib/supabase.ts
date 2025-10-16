@@ -22,13 +22,7 @@ const customFetch = async (url: RequestInfo | URL, options?: RequestInit) => {
     console.log('Fetching:', url.toString().substring(0, 100));
 
     const response = await Promise.race([
-      fetch(url, {
-        ...options,
-        headers: {
-          ...options?.headers,
-          'Content-Type': 'application/json',
-        },
-      }),
+      fetch(url, options),
       new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Request timeout after 30s')), 30000)
       ),
@@ -54,12 +48,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     fetch: customFetch,
-    headers: {
-      'X-Client-Info': 'taxtalkpro-mobile',
-    },
-  },
-  db: {
-    schema: 'public',
   },
 });
 
