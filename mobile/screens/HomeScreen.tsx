@@ -88,14 +88,29 @@ export default function HomeScreen({ navigation }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.logo}>Tax Talk Pro</Text>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => user ? navigation.navigate('Account') : navigation.navigate('Auth')}
-        >
-          <Text style={styles.headerButtonText}>
-            {user ? 'Account' : 'Sign In'}
-          </Text>
-        </TouchableOpacity>
+        {user ? (
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.navigate('Account')}
+          >
+            <Text style={styles.headerButtonText}>Account</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.headerButtons}>
+            <TouchableOpacity
+              style={styles.signInButton}
+              onPress={() => navigation.navigate('Auth')}
+            >
+              <Text style={styles.signInButtonText}>Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.subscribeButton}
+              onPress={() => navigation.navigate('Subscription')}
+            >
+              <Text style={styles.subscribeButtonText}>Subscribe</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <View style={{ padding: 16, backgroundColor: '#ffe6e6' }}>
@@ -108,6 +123,29 @@ export default function HomeScreen({ navigation }: Props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
+        {!user && videos.length > 0 && (
+          <View style={styles.heroBanner}>
+            <Text style={styles.heroTitle}>Welcome to Tax Talk Pro</Text>
+            <Text style={styles.heroSubtitle}>
+              Access professional tax training videos to enhance your expertise
+            </Text>
+            <View style={styles.heroButtons}>
+              <TouchableOpacity
+                style={styles.heroSubscribeButton}
+                onPress={() => navigation.navigate('Subscription')}
+              >
+                <Text style={styles.heroSubscribeButtonText}>View Plans</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.heroSignInButton}
+                onPress={() => navigation.navigate('Auth')}
+              >
+                <Text style={styles.heroSignInButtonText}>Sign In</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {loading && (
           <View style={styles.loadingContainer}>
             <Text style={styles.loadingText}>Loading videos...</Text>
@@ -129,7 +167,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
-        {profile?.subscription_status !== 'active' && videos.length > 0 && (
+        {user && profile?.subscription_status !== 'active' && videos.length > 0 && (
           <TouchableOpacity
             style={styles.subscribeBanner}
             onPress={() => navigation.navigate('Subscription')}
@@ -212,8 +250,90 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  signInButton: {
+    backgroundColor: 'transparent',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
+  signInButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  subscribeButton: {
+    backgroundColor: '#827546',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  subscribeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   scrollView: {
     flex: 1,
+  },
+  heroBanner: {
+    backgroundColor: '#033a66',
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  heroTitle: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  heroSubtitle: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center',
+    opacity: 0.9,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  heroButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  heroSubscribeButton: {
+    flex: 1,
+    backgroundColor: '#827546',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  heroSubscribeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  heroSignInButton: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  heroSignInButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   subscribeBanner: {
     backgroundColor: '#827546',
