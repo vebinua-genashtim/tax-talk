@@ -154,26 +154,52 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.greetingSection}>
-          <Text style={styles.greeting}>{getGreeting()}</Text>
-          <Text style={styles.userName}>{getUserName()}</Text>
-        </View>
-        {user ? (
-          <TouchableOpacity
-            style={styles.accountButton}
-            onPress={() => navigation.navigate('Account')}
-          >
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{getUserName().charAt(0)}</Text>
+        <View style={styles.headerContent}>
+          <View style={styles.logoSection}>
+            <View style={styles.logoContainer}>
+              <View style={styles.logoIcon}>
+                <Text style={styles.logoText}>T</Text>
+              </View>
+              <View>
+                <Text style={styles.brandName}>TaxTalk</Text>
+                <Text style={styles.brandTagline}>Professional Tax Education</Text>
+              </View>
             </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.signInButton}
-            onPress={() => navigation.navigate('Auth')}
-          >
-            <Text style={styles.signInButtonText}>Sign In</Text>
-          </TouchableOpacity>
+          </View>
+
+          <View style={styles.headerActions}>
+            {user ? (
+              <>
+                {profile?.subscription_status === 'active' && (
+                  <View style={styles.premiumBadge}>
+                    <Text style={styles.premiumBadgeText}>PRO</Text>
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.accountButton}
+                  onPress={() => navigation.navigate('Account')}
+                >
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{getUserName().charAt(0)}</Text>
+                  </View>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.signInButton}
+                onPress={() => navigation.navigate('Auth')}
+              >
+                <Text style={styles.signInButtonText}>Sign In</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        {user && (
+          <View style={styles.welcomeSection}>
+            <Text style={styles.greeting}>{getGreeting()},</Text>
+            <Text style={styles.userName}>{getUserName()}</Text>
+          </View>
         )}
       </View>
 
@@ -448,38 +474,89 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
     paddingTop: 50,
-    paddingBottom: 16,
+    paddingBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    paddingHorizontal: 20,
   },
-  greetingSection: {
+  logoSection: {
     flex: 1,
   },
-  greeting: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 2,
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  userName: {
-    fontSize: 22,
+  logoIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: '#827546',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#827546',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  logoText: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  brandName: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#1f2937',
+    letterSpacing: -0.5,
+  },
+  brandTagline: {
+    fontSize: 11,
+    color: '#6b7280',
+    marginTop: 1,
+    letterSpacing: 0.3,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  premiumBadge: {
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#fbbf24',
+  },
+  premiumBadgeText: {
+    color: '#92400e',
+    fontSize: 11,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   accountButton: {
     padding: 0,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#827546',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#f3f4f6',
   },
   avatarText: {
     color: '#fff',
@@ -490,12 +567,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#827546',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 12,
+    shadowColor: '#827546',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
   signInButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  welcomeSection: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 4,
+  },
+  greeting: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginTop: 2,
+    letterSpacing: -0.5,
   },
   scrollView: {
     flex: 1,

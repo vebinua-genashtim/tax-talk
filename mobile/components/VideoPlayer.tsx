@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
-import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -12,17 +12,45 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ videoUrl, posterUrl, videoId }: VideoPlayerProps) {
   const { user } = useAuth();
-  const videoRef = useRef<Video>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [watchProgress, setWatchProgress] = useState<any>(null);
   const [showControls, setShowControls] = useState(true);
+
+  const player = useVideoPlayer(videoUrl, (player) => {
+    player.loop = false;
+    player.muted = false;
+  });
 
   useEffect(() => {
     if (user && videoId) {
       loadWatchProgress();
     }
   }, [user, videoId]);
+
+  useEffect(() => {
+    if (!player) return;
+
+    const subscription = player.addListener('statusChange', (status) => {
+      if (status === 'idle' && player.duration > 0 && player.currentTime >= player.duration - 1) {
+        setIsPlaying(false);
+        setShowControls(true);
+        if (user && player.duration) {
+          saveWatchProgress(player.duration, player.duration, true);
+        }
+      }
+
+      if (status === 'playing' && user && player.duration) {
+        const currentTime = player.currentTime;
+        const duration = player.duration;
+        saveWatchProgress(currentTime, duration);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [player, user]);
 
   const loadWatchProgress = async () => {
     if (!user) return;
@@ -67,36 +95,20 @@ export default function VideoPlayer({ videoUrl, posterUrl, videoId }: VideoPlaye
   };
 
   const handlePlayPress = async (resumeFromStart: boolean = false) => {
-    if (!videoRef.current) return;
+    if (!player) return;
 
     setIsLoading(true);
 
     if (!resumeFromStart && watchProgress && watchProgress.progress_seconds > 0) {
-      await videoRef.current.setPositionAsync(watchProgress.progress_seconds * 1000);
+      player.currentTime = watchProgress.progress_seconds;
+    } else {
+      player.currentTime = 0;
     }
 
-    await videoRef.current.playAsync();
+    player.play();
     setShowControls(false);
     setIsPlaying(true);
     setIsLoading(false);
-  };
-
-  const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
-
-    if (status.didJustFinish) {
-      setIsPlaying(false);
-      setShowControls(true);
-      if (user && status.durationMillis) {
-        saveWatchProgress(status.durationMillis / 1000, status.durationMillis / 1000, true);
-      }
-    }
-
-    if (status.isPlaying && user && status.durationMillis) {
-      const currentTime = status.positionMillis / 1000;
-      const duration = status.durationMillis / 1000;
-      saveWatchProgress(currentTime, duration);
-    }
   };
 
   const hasStarted = watchProgress && watchProgress.progress_seconds > 0;
@@ -104,19 +116,13 @@ export default function VideoPlayer({ videoUrl, posterUrl, videoId }: VideoPlaye
 
   return (
     <View style={styles.container}>
-      <Video
-        ref={videoRef}
-        source={{ uri: videoUrl }}
-        posterSource={{ uri: posterUrl }}
-        rate={1.0}
-        volume={1.0}
-        isMuted={false}
-        resizeMode={ResizeMode.CONTAIN}
-        shouldPlay={false}
-        isLooping={false}
+      <VideoView
         style={styles.video}
-        useNativeControls={isPlaying}
-        onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+        player={player}
+        allowsFullscreen
+        allowsPictureInPicture
+        contentFit="contain"
+        nativeControls={isPlaying}
       />
 
       {showControls && !isPlaying && (
