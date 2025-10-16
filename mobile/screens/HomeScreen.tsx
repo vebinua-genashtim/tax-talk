@@ -87,7 +87,7 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logo}>Tax Academy</Text>
+        <Text style={styles.logo}>Tax Talk Pro</Text>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => user ? navigation.navigate('Account') : navigation.navigate('Auth')}

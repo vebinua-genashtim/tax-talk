@@ -55,9 +55,9 @@ export default function AuthScreen({ navigation }: Props) {
   };
 
   const demoAccounts = [
-    { email: 'free@taxacademy.sg', name: 'Free User', desc: 'Trailers only' },
-    { email: 'payper@taxacademy.sg', name: 'Pay-Per-View', desc: '2 purchased videos' },
-    { email: 'subscriber@taxacademy.sg', name: 'Subscriber', desc: 'Full access' },
+    { email: 'free@taxtalkpro.com', name: 'Free User', desc: 'Trailers only' },
+    { email: 'payper@taxtalkpro.com', name: 'Pay-Per-View', desc: '2 purchased videos' },
+    { email: 'subscriber@taxtalkpro.com', name: 'Subscriber', desc: 'Full access' },
   ];
 
   return (
@@ -68,7 +68,7 @@ export default function AuthScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <Text style={styles.title}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
-          <Text style={styles.subtitle}>Tax Academy Singapore</Text>
+          <Text style={styles.subtitle}>Tax Talk Pro</Text>
 
           {!isSignUp && (
             <View style={styles.demoSection}>

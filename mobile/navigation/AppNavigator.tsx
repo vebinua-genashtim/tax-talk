@@ -36,7 +36,7 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Tax Academy Singapore' }}
+          options={{ title: 'Tax Talk Pro' }}
         />
         <Stack.Screen
           name="VideoDetail"
