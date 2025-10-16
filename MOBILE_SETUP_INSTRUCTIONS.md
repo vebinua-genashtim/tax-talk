@@ -108,11 +108,13 @@ This adapter makes Supabase auth compatible with Expo's SecureStore API.
 - Causes `PlatformConstants` errors in Expo SDK 53
 - SecureStore is more secure and works out of the box with Expo Go
 
-## SDK Version Info
+## SDK Version Info (Mobile-Only, Recommended)
 
 - **Expo SDK**: 53.0.0 (Stable, Recommended for production)
 - **React Native**: 0.79.2
-- **React**: 18.3.1
+- **React**: 19.0.0 (Latest stable)
+- **@types/react**: 19.0.0
+- Removed: `react-native-web`, `react-dom` (mobile-only, no version conflicts)
 
 ## Next Steps
 
