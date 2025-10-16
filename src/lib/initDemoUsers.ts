@@ -24,16 +24,16 @@ export async function initializeDemoUsers() {
         -- This script will create the supporting data once users exist
 
         RAISE NOTICE 'Demo data setup complete. Create these users in Supabase Auth Dashboard:';
-        RAISE NOTICE '1. free@taxacademy.sg (password: demo123456)';
-        RAISE NOTICE '2. payper@taxacademy.sg (password: demo123456)';
-        RAISE NOTICE '3. subscriber@taxacademy.sg (password: demo123456)';
+        RAISE NOTICE '1. free@taxtalkpro.com (password: password123)';
+        RAISE NOTICE '2. payper@taxtalkpro.com (password: password123)';
+        RAISE NOTICE '3. subscriber@taxtalkpro.com (password: password123)';
       END $$;
     `;
 
     results.push('Checking for existing demo users...');
 
-    const demoEmails = ['free@taxacademy.sg', 'payper@taxacademy.sg', 'subscriber@taxacademy.sg'];
-    const passwords = 'demo123456';
+    const demoEmails = ['free@taxtalkpro.com', 'payper@taxtalkpro.com', 'subscriber@taxtalkpro.com'];
+    const passwords = 'password123';
 
     for (const email of demoEmails) {
       try {

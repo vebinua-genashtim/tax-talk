@@ -49,25 +49,25 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
 
   const demoAccounts: DemoAccount[] = [
     {
-      email: 'free@taxacademy.sg',
-      password: 'demo123456',
+      email: 'free@taxtalkpro.com',
+      password: 'password123',
       name: 'Free User',
       type: 'free',
       description: 'Watch trailers only',
       icon: <User className="w-5 h-5" />,
     },
     {
-      email: 'payper@taxacademy.sg',
-      password: 'demo123456',
+      email: 'payper@taxtalkpro.com',
+      password: 'password123',
       name: 'Pay-Per-View User',
       type: 'pay-per-view',
-      description: 'Purchased 2 videos',
+      description: 'Purchased 5 videos',
       icon: <CreditCard className="w-5 h-5" />,
     },
     {
-      email: 'subscriber@taxacademy.sg',
-      password: 'demo123456',
-      name: 'Subscriber',
+      email: 'subscriber@taxtalkpro.com',
+      password: 'password123',
+      name: 'Active Subscriber',
       type: 'subscriber',
       description: 'Full access to all videos',
       icon: <Crown className="w-5 h-5" />,
@@ -113,7 +113,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
         <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
-          Access Tax Academy Singapore training platform
+          Access Tax Talk Pro training platform
         </p>
 
         {showDemoAccounts && !isSignUp && (
@@ -144,7 +144,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
                   <p className="font-semibold text-gray-800">{account.name}</p>
                   <p className="text-gray-600">{account.description}</p>
                   <p className="text-gray-700 font-mono mt-1 text-xs">
-                    {account.email} / demo123456
+                    {account.email} / {account.password}
                   </p>
                 </div>
               ))}
