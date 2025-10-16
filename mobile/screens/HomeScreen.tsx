@@ -29,7 +29,6 @@ export default function HomeScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>('Initializing...');
 
   useEffect(() => {
     loadVideos();
@@ -37,33 +36,19 @@ export default function HomeScreen({ navigation }: Props) {
 
   const loadVideos = async () => {
     try {
-      setDebugInfo('Starting to load videos...');
-      console.log('Loading videos...');
-
       const { data, error } = await supabase
         .from('videos')
         .select('*, category:categories(name)')
         .order('created_at', { ascending: false });
 
-      setDebugInfo(`Response received. Data: ${data?.length || 0} videos, Error: ${error?.message || 'none'}`);
-      console.log('Videos response:', { data, error });
+      if (error) throw error;
 
-      if (error) {
-        console.error('Supabase error:', error);
-        setError(error.message);
-        setDebugInfo(`Error: ${error.message}`);
-        throw error;
-      }
-
-      console.log('Videos loaded:', data?.length);
       setVideos(data || []);
       setError(null);
-      setDebugInfo(`Success! Loaded ${data?.length || 0} videos`);
     } catch (error) {
       console.error('Error loading videos:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to load videos';
       setError(errorMsg);
-      setDebugInfo(`Catch block: ${errorMsg}`);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -74,6 +59,10 @@ export default function HomeScreen({ navigation }: Props) {
     setRefreshing(true);
     loadVideos();
   };
+
+  const featuredVideos = videos.filter(v => v.is_featured).slice(0, 6);
+  const newVideos = videos.filter(v => v.is_new).slice(0, 6);
+  const popularVideos = [...videos].sort((a, b) => b.view_count - a.view_count).slice(0, 6);
 
   const groupedVideos = videos.reduce((acc, video) => {
     const categoryName = video.category?.name || 'Uncategorized';
@@ -113,9 +102,6 @@ export default function HomeScreen({ navigation }: Props) {
         )}
       </View>
 
-      <View style={{ padding: 16, backgroundColor: '#ffe6e6' }}>
-        <Text style={{ fontSize: 12, color: '#cc0000' }}>Debug: {debugInfo}</Text>
-      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -182,6 +168,115 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
         )}
 
+        {featuredVideos.length > 0 && (
+          <View style={styles.categorySection}>
+            <Text style={styles.categoryTitle}>Featured Training</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.videoRow}
+            >
+              {featuredVideos.map((video) => (
+                <TouchableOpacity
+                  key={video.id}
+                  style={styles.videoCard}
+                  onPress={() => navigation.navigate('VideoDetail', { video })}
+                >
+                  <Image
+                    source={{ uri: video.thumbnail_url }}
+                    style={styles.thumbnail}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.videoTitle} numberOfLines={2}>
+                      {video.title}
+                    </Text>
+                    <View style={styles.videoMeta}>
+                      <Text style={styles.metaText}>{video.duration_minutes} min</Text>
+                      <Text style={styles.metaText}>•</Text>
+                      <Text style={styles.priceText}>${video.price.toFixed(2)}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {newVideos.length > 0 && (
+          <View style={styles.categorySection}>
+            <Text style={styles.categoryTitle}>New Releases</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.videoRow}
+            >
+              {newVideos.map((video) => (
+                <TouchableOpacity
+                  key={video.id}
+                  style={styles.videoCard}
+                  onPress={() => navigation.navigate('VideoDetail', { video })}
+                >
+                  <Image
+                    source={{ uri: video.thumbnail_url }}
+                    style={styles.thumbnail}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.videoTitle} numberOfLines={2}>
+                      {video.title}
+                    </Text>
+                    <View style={styles.videoMeta}>
+                      <Text style={styles.metaText}>{video.duration_minutes} min</Text>
+                      <Text style={styles.metaText}>•</Text>
+                      <Text style={styles.priceText}>${video.price.toFixed(2)}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {popularVideos.length > 0 && (
+          <View style={styles.categorySection}>
+            <Text style={styles.categoryTitle}>Most Popular</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.videoRow}
+            >
+              {popularVideos.map((video) => (
+                <TouchableOpacity
+                  key={video.id}
+                  style={styles.videoCard}
+                  onPress={() => navigation.navigate('VideoDetail', { video })}
+                >
+                  <Image
+                    source={{ uri: video.thumbnail_url }}
+                    style={styles.thumbnail}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.videoTitle} numberOfLines={2}>
+                      {video.title}
+                    </Text>
+                    <View style={styles.videoMeta}>
+                      <Text style={styles.metaText}>{video.duration_minutes} min</Text>
+                      <Text style={styles.metaText}>•</Text>
+                      <Text style={styles.priceText}>${video.price.toFixed(2)}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        <View style={styles.allVideosHeader}>
+          <Text style={styles.allVideosTitle}>Browse by Category</Text>
+        </View>
+
         {Object.entries(groupedVideos).map(([category, categoryVideos]) => (
           <View key={category} style={styles.categorySection}>
             <Text style={styles.categoryTitle}>{category}</Text>
@@ -216,6 +311,8 @@ export default function HomeScreen({ navigation }: Props) {
             </ScrollView>
           </View>
         ))}
+
+        <View style={styles.bottomPadding} />
       </ScrollView>
     </View>
   );
@@ -224,7 +321,7 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9fafb',
   },
   header: {
     backgroundColor: '#033a66',
@@ -280,21 +377,27 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    backgroundColor: '#f9fafb',
   },
   heroBanner: {
     backgroundColor: '#033a66',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 24,
-    borderRadius: 16,
+    margin: 16,
+    padding: 32,
+    borderRadius: 20,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   heroTitle: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 12,
+    letterSpacing: -0.5,
   },
   heroSubtitle: {
     color: '#fff',
@@ -339,8 +442,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#827546',
     marginHorizontal: 16,
     marginTop: 16,
-    padding: 20,
-    borderRadius: 12,
+    padding: 24,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
   },
   bannerTitle: {
     color: '#fff',
@@ -367,14 +475,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   categorySection: {
-    marginTop: 24,
+    marginTop: 32,
+    marginBottom: 8,
   },
   categoryTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#033a66',
+    color: '#1f2937',
     paddingHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 16,
+    letterSpacing: -0.3,
   },
   videoRow: {
     paddingHorizontal: 16,
@@ -383,27 +493,28 @@ const styles = StyleSheet.create({
   videoCard: {
     width: CARD_WIDTH,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
+    overflow: 'hidden',
   },
   thumbnail: {
     width: '100%',
-    height: CARD_WIDTH * 0.6,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    height: CARD_WIDTH * 0.65,
+    backgroundColor: '#e5e7eb',
   },
   cardContent: {
-    padding: 12,
+    padding: 14,
   },
   videoTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: '#1f2937',
-    marginBottom: 6,
+    marginBottom: 8,
+    lineHeight: 20,
   },
   videoMeta: {
     flexDirection: 'row',
@@ -462,5 +573,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6b7280',
     textAlign: 'center',
+  },
+  allVideosHeader: {
+    marginTop: 40,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  allVideosTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    letterSpacing: -0.5,
+  },
+  bottomPadding: {
+    height: 40,
   },
 });
