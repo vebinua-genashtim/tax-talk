@@ -17,12 +17,39 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
+const customFetch = async (url: RequestInfo | URL, options?: RequestInit) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.error('Fetch error:', error);
+    throw error;
+  }
+};
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: ExpoSecureStoreAdapter,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+  },
+  global: {
+    fetch: customFetch,
+    headers: {
+      'X-Client-Info': 'taxtalkpro-mobile',
+    },
+  },
+  db: {
+    schema: 'public',
   },
 });
 
@@ -73,4 +100,30 @@ export interface WatchProgress {
   last_watched_at: string;
   created_at: string;
   updated_at: string;
+}
+
+export async function testConnection() {
+  try {
+    console.log('Testing Supabase connection...');
+    console.log('URL:', supabaseUrl);
+
+    const { data, error } = await supabase
+      .from('videos')
+      .select('count')
+      .limit(1);
+
+    if (error) {
+      console.error('Connection test failed:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log('Connection test successful!');
+    return { success: true, data };
+  } catch (error) {
+    console.error('Connection test error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
 }

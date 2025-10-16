@@ -11,7 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { supabase, Video } from '../lib/supabase';
+import { supabase, Video, testConnection } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -35,26 +35,49 @@ export default function HomeScreen({ navigation }: Props) {
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
 
   useEffect(() => {
-    loadVideos();
-    if (user) {
-      loadWatchProgress();
-    }
+    const initializeData = async () => {
+      const connectionTest = await testConnection();
+      console.log('Connection test result:', connectionTest);
+
+      loadVideos();
+      if (user) {
+        loadWatchProgress();
+      }
+    };
+
+    initializeData();
   }, [user]);
 
   const loadVideos = async () => {
     try {
+      console.log('Loading videos from Supabase...');
       const { data, error } = await supabase
         .from('videos')
         .select('*, category:categories(name)')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
+      console.log('Videos loaded successfully:', data?.length || 0);
       setVideos(data || []);
       setError(null);
     } catch (error) {
       console.error('Error loading videos:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Failed to load videos';
+      let errorMsg = 'Failed to load videos';
+
+      if (error instanceof Error) {
+        if (error.message.includes('Network request failed')) {
+          errorMsg = 'Network connection failed. Please check your internet connection and try again.';
+        } else if (error.message.includes('fetch')) {
+          errorMsg = 'Unable to connect to server. Please check your internet connection.';
+        } else {
+          errorMsg = error.message;
+        }
+      }
+
       setError(errorMsg);
     } finally {
       setLoading(false);
