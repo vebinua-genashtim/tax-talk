@@ -16,7 +16,13 @@
       "package": "com.taxtalkpro.app",
       "adaptiveIcon": {
         "backgroundColor": "#033a66"
-      }
+      },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE"
+      ],
+      "usesCleartextTraffic": false
     },
     "web": {
       "bundler": "metro"

@@ -18,19 +18,29 @@ const ExpoSecureStoreAdapter = {
 };
 
 const customFetch = async (url: RequestInfo | URL, options?: RequestInit) => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
-
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    return response;
+    console.log('Fetching:', url.toString().substring(0, 100));
+
+    const response = await Promise.race([
+      fetch(url, {
+        ...options,
+        headers: {
+          ...options?.headers,
+          'Content-Type': 'application/json',
+        },
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout after 30s')), 30000)
+      ),
+    ]);
+
+    console.log('Fetch response status:', response.status);
+    return response as Response;
   } catch (error) {
-    clearTimeout(timeoutId);
-    console.error('Fetch error:', error);
+    console.error('Fetch error details:', {
+      url: url.toString(),
+      error: error instanceof Error ? error.message : error,
+    });
     throw error;
   }
 };

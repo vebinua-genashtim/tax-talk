@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { supabase, Video, testConnection } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { checkNetworkConnectivity, getNetworkErrorMessage } from '../lib/networkHelper';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -36,6 +37,17 @@ export default function HomeScreen({ navigation }: Props) {
 
   useEffect(() => {
     const initializeData = async () => {
+      console.log('Initializing app data...');
+
+      const networkCheck = await checkNetworkConnectivity();
+      console.log('Network connectivity:', networkCheck);
+
+      if (!networkCheck.canReachSupabase) {
+        setError(getNetworkErrorMessage({ message: 'Network request failed' }));
+        setLoading(false);
+        return;
+      }
+
       const connectionTest = await testConnection();
       console.log('Connection test result:', connectionTest);
 
@@ -66,18 +78,7 @@ export default function HomeScreen({ navigation }: Props) {
       setError(null);
     } catch (error) {
       console.error('Error loading videos:', error);
-      let errorMsg = 'Failed to load videos';
-
-      if (error instanceof Error) {
-        if (error.message.includes('Network request failed')) {
-          errorMsg = 'Network connection failed. Please check your internet connection and try again.';
-        } else if (error.message.includes('fetch')) {
-          errorMsg = 'Unable to connect to server. Please check your internet connection.';
-        } else {
-          errorMsg = error.message;
-        }
-      }
-
+      const errorMsg = getNetworkErrorMessage(error);
       setError(errorMsg);
     } finally {
       setLoading(false);
