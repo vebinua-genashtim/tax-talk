@@ -1,21 +1,26 @@
-# Mobile App Setup Instructions (Expo SDK 52)
+# Mobile App Setup Instructions (Expo SDK 53)
 
 ## Fixed: PlatformConstants Error
 
-The mobile app has been updated to work with **Expo SDK 52** and Expo Go.
+The mobile app has been updated to work with **Expo SDK 53** (stable, recommended) and Expo Go.
 
 ### What Was Changed
 
-1. **Replaced AsyncStorage with expo-secure-store**
+1. **Upgraded to Expo SDK 53**
+   - React Native 0.79.2
+   - Stable and recommended for production use
+   - Better community support and stability
+
+2. **Replaced AsyncStorage with expo-secure-store**
    - `@react-native-async-storage/async-storage` → `expo-secure-store`
    - AsyncStorage causes PlatformConstants errors in Expo Go
-   - SecureStore is the recommended solution for Expo SDK 52+
+   - SecureStore is the recommended solution for Expo SDK 53
 
-2. **Updated Supabase Storage Adapter**
+3. **Updated Supabase Storage Adapter**
    - Created custom `ExpoSecureStoreAdapter` for Supabase auth
    - Uses `SecureStore.getItemAsync()`, `setItemAsync()`, `deleteItemAsync()`
 
-3. **Updated app.json**
+4. **Updated app.json**
    - Added proper Android adaptive icon configuration
    - Added empty plugins array for future extensibility
 
@@ -100,8 +105,14 @@ This adapter makes Supabase auth compatible with Expo's SecureStore API.
 
 - AsyncStorage requires native modules
 - Not available by default in Expo Go
-- Causes `PlatformConstants` errors in Expo SDK 52+
+- Causes `PlatformConstants` errors in Expo SDK 53
 - SecureStore is more secure and works out of the box with Expo Go
+
+## SDK Version Info
+
+- **Expo SDK**: 53.0.0 (Stable, Recommended for production)
+- **React Native**: 0.79.2
+- **React**: 18.3.1
 
 ## Next Steps
 
