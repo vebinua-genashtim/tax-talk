@@ -22,17 +22,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session ? 'User logged in' : 'No user');
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        console.log('Loading profile for initial session user:', session.user.email);
         loadProfile(session.user.id);
       } else {
         setLoading(false);
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       (async () => {
+        console.log('Auth state changed:', event, session ? session.user.email : 'No user');
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
@@ -49,6 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadProfile = async (userId: string) => {
     try {
+      console.log('Loading profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -59,6 +63,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('Error loading profile:', error);
       }
 
+      console.log('Profile loaded:', data ? 'Success' : 'No data');
+      if (data) {
+        console.log('Profile subscription status:', data.subscription_status);
+      }
       setProfile(data);
     } catch (error) {
       console.error('Error loading profile:', error);

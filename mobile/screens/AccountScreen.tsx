@@ -14,7 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 type Props = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation }: Props) {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, loading, signOut } = useAuth();
 
   const handleSignOut = () => {
     Alert.alert(
@@ -34,10 +34,26 @@ export default function AccountScreen({ navigation }: Props) {
     );
   };
 
-  if (!user || !profile) {
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!user) {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Please sign in to view your account</Text>
+      </View>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Loading profile...</Text>
       </View>
     );
   }
@@ -63,10 +79,12 @@ export default function AccountScreen({ navigation }: Props) {
             <Text style={styles.infoLabel}>Name</Text>
             <Text style={styles.infoValue}>{profile.full_name}</Text>
           </View>
-          <View style={styles.infoGroup}>
-            <Text style={styles.infoLabel}>Member Since</Text>
-            <Text style={styles.infoValue}>{formatDate(profile.created_at)}</Text>
-          </View>
+          {profile.created_at && (
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoLabel}>Member Since</Text>
+              <Text style={styles.infoValue}>{formatDate(profile.created_at)}</Text>
+            </View>
+          )}
         </View>
 
         <View style={[styles.card, styles.membershipCard]}>
