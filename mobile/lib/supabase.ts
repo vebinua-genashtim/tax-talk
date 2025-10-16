@@ -2,8 +2,8 @@ import 'react-native-url-polyfill/auto';
 import * as SecureStore from 'expo-secure-store';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
+const supabaseUrl = 'https://aexpvbtgtzfwsysxzwew.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFleHB2YnRndHpmd3N5c3h6d2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MTc0NjUsImV4cCI6MjA3NTk5MzQ2NX0.aUmBkcuMt7GpGLllKGZhdmmcaW9E30uKQPJez0-AU3o';
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -35,10 +35,12 @@ export interface Video {
   full_video_url: string;
   duration_minutes: number;
   price: number;
-  category_id: string;
+  category_id?: string;
   category?: {
     name: string;
   };
+  is_featured: boolean;
+  is_new: boolean;
   view_count: number;
   created_at: string;
 }
@@ -46,9 +48,29 @@ export interface Video {
 export interface UserProfile {
   id: string;
   email: string;
-  full_name: string;
-  subscription_status: 'free' | 'active' | 'cancelled';
-  subscription_plan: string | null;
-  subscription_end_date: string | null;
+  full_name?: string;
+  subscription_status: 'free' | 'active' | 'expired';
+  subscription_end_date?: string;
+  is_admin: boolean;
+  created_at?: string;
+}
+
+export interface Purchase {
+  id: string;
+  user_id: string;
+  video_id: string;
+  amount_paid: number;
+  purchased_at: string;
+}
+
+export interface WatchProgress {
+  id: string;
+  user_id: string;
+  video_id: string;
+  progress_seconds: number;
+  duration_seconds: number;
+  completed: boolean;
+  last_watched_at: string;
   created_at: string;
+  updated_at: string;
 }

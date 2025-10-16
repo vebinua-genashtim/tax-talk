@@ -91,16 +91,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
-      if (!error && data.user) {
-        await supabase.from('user_profiles').insert({
-          id: data.user.id,
-          email: data.user.email,
-          full_name: fullName,
-          subscription_status: 'free',
-        });
+      if (error) {
+        return { error };
       }
 
-      return { error };
+      if (data.user) {
+        const { error: profileError } = await supabase.from('user_profiles').insert({
+          id: data.user.id,
+          email: data.user.email || email,
+          full_name: fullName,
+          subscription_status: 'free',
+          is_admin: false,
+        });
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        }
+      }
+
+      return { error: null };
     } catch (error: any) {
       return { error };
     }

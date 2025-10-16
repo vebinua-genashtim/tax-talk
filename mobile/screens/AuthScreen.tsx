@@ -39,26 +39,52 @@ export default function AuthScreen({ navigation }: Props) {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName);
-        if (error) throw error;
-        Alert.alert('Success', 'Account created successfully!');
+        const { error } = await signUp(email.trim().toLowerCase(), password, fullName);
+        if (error) {
+          console.error('Sign up error:', error);
+          throw error;
+        }
+        Alert.alert('Success', 'Account created successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
       } else {
-        const { error } = await signIn(email, password);
-        if (error) throw error;
+        const { error } = await signIn(email.trim().toLowerCase(), password);
+        if (error) {
+          console.error('Sign in error:', error);
+          throw error;
+        }
+        navigation.goBack();
       }
-      navigation.goBack();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'An error occurred');
+      const errorMessage = error?.message || 'An error occurred during authentication';
+      console.error('Auth error:', errorMessage);
+      Alert.alert('Authentication Error', errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const demoAccounts = [
-    { email: 'free@taxtalkpro.com', name: 'Free User', desc: 'Trailers only' },
-    { email: 'payper@taxtalkpro.com', name: 'Pay-Per-View', desc: '2 purchased videos' },
-    { email: 'subscriber@taxtalkpro.com', name: 'Subscriber', desc: 'Full access' },
+    { email: 'free@taxtalkpro.com', name: 'Free User', desc: 'Trailers only', password: 'demo123456' },
+    { email: 'payper@taxtalkpro.com', name: 'Pay-Per-View', desc: '2 purchased videos', password: 'demo123456' },
+    { email: 'subscriber@taxtalkpro.com', name: 'Subscriber', desc: 'Full access', password: 'demo123456' },
   ];
+
+  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
+    setLoading(true);
+    try {
+      const { error } = await signIn(demoEmail, demoPassword);
+      if (error) {
+        console.error('Demo login error:', error);
+        throw error;
+      }
+      navigation.goBack();
+    } catch (error: any) {
+      Alert.alert('Login Error', error?.message || 'Failed to login with demo account');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -72,13 +98,25 @@ export default function AuthScreen({ navigation }: Props) {
 
           {!isSignUp && (
             <View style={styles.demoSection}>
-              <Text style={styles.demoTitle}>Demo Accounts</Text>
+              <Text style={styles.demoTitle}>Quick Demo Login</Text>
               {demoAccounts.map((account) => (
-                <View key={account.email} style={styles.demoAccount}>
-                  <Text style={styles.demoName}>{account.name}</Text>
-                  <Text style={styles.demoDesc}>{account.desc}</Text>
-                  <Text style={styles.demoEmail}>{account.email} / demo123456</Text>
-                </View>
+                <TouchableOpacity
+                  key={account.email}
+                  style={styles.demoAccount}
+                  onPress={() => handleDemoLogin(account.email, account.password)}
+                  disabled={loading}
+                >
+                  <View style={styles.demoAccountContent}>
+                    <View style={styles.demoInfo}>
+                      <Text style={styles.demoName}>{account.name}</Text>
+                      <Text style={styles.demoDesc}>{account.desc}</Text>
+                      <Text style={styles.demoEmail}>{account.email}</Text>
+                    </View>
+                    <View style={styles.demoLoginButton}>
+                      <Text style={styles.demoLoginText}>Login</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               ))}
             </View>
           )}
@@ -172,7 +210,7 @@ const styles = StyleSheet.create({
   demoSection: {
     backgroundColor: '#f9fafb',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 24,
   },
   demoTitle: {
@@ -182,22 +220,47 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   demoAccount: {
-    marginBottom: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  demoAccountContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+  },
+  demoInfo: {
+    flex: 1,
   },
   demoName: {
     fontSize: 14,
     fontWeight: '600',
     color: '#1f2937',
+    marginBottom: 2,
   },
   demoDesc: {
     fontSize: 12,
     color: '#6b7280',
+    marginBottom: 4,
   },
   demoEmail: {
     fontSize: 11,
-    color: '#374151',
+    color: '#827546',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 4,
+  },
+  demoLoginButton: {
+    backgroundColor: '#827546',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  demoLoginText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
   },
   form: {
     gap: 16,
