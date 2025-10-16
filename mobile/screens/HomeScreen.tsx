@@ -8,6 +8,7 @@ import {
   StyleSheet,
   RefreshControl,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { supabase, Video } from '../lib/supabase';
@@ -21,7 +22,8 @@ interface Props {
 }
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.42;
+const CARD_WIDTH = width * 0.45;
+const HERO_CARD_WIDTH = width * 0.85;
 
 export default function HomeScreen({ navigation }: Props) {
   const { user, profile } = useAuth();
@@ -29,10 +31,15 @@ export default function HomeScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
 
   useEffect(() => {
     loadVideos();
-  }, []);
+    if (user) {
+      loadWatchProgress();
+    }
+  }, [user]);
 
   const loadVideos = async () => {
     try {
@@ -55,6 +62,33 @@ export default function HomeScreen({ navigation }: Props) {
     }
   };
 
+  const loadWatchProgress = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('watch_progress')
+        .select('video_id, progress_seconds, duration_seconds, completed')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      const progressMap = new Map(
+        data?.map(p => [
+          p.video_id,
+          {
+            progress_seconds: p.progress_seconds,
+            duration_seconds: p.duration_seconds,
+            completed: p.completed
+          }
+        ]) || []
+      );
+      setWatchProgress(progressMap);
+    } catch (error) {
+      console.error('Error loading watch progress:', error);
+    }
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     loadVideos();
@@ -63,6 +97,26 @@ export default function HomeScreen({ navigation }: Props) {
   const featuredVideos = videos.filter(v => v.is_featured).slice(0, 6);
   const newVideos = videos.filter(v => v.is_new).slice(0, 6);
   const popularVideos = [...videos].sort((a, b) => b.view_count - a.view_count).slice(0, 6);
+
+  const continueWatchingVideos = videos.filter(video => {
+    const progress = watchProgress.get(video.id);
+    return progress && !progress.completed && progress.progress_seconds > 0;
+  }).slice(0, 6);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  const getUserName = () => {
+    if (user?.email) {
+      const name = user.email.split('@')[0];
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+    return 'There';
+  };
 
   const groupedVideos = videos.reduce((acc, video) => {
     const categoryName = video.category?.name || 'Uncategorized';
@@ -76,29 +130,26 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logo}>Tax Talk Pro</Text>
+        <View style={styles.greetingSection}>
+          <Text style={styles.greeting}>{getGreeting()}</Text>
+          <Text style={styles.userName}>{getUserName()}</Text>
+        </View>
         {user ? (
           <TouchableOpacity
-            style={styles.headerButton}
+            style={styles.accountButton}
             onPress={() => navigation.navigate('Account')}
           >
-            <Text style={styles.headerButtonText}>Account</Text>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{getUserName().charAt(0)}</Text>
+            </View>
           </TouchableOpacity>
         ) : (
-          <View style={styles.headerButtons}>
-            <TouchableOpacity
-              style={styles.signInButton}
-              onPress={() => navigation.navigate('Auth')}
-            >
-              <Text style={styles.signInButtonText}>Sign In</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.subscribeButton}
-              onPress={() => navigation.navigate('Subscription')}
-            >
-              <Text style={styles.subscribeButtonText}>Subscribe</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.signInButton}
+            onPress={() => navigation.navigate('Auth')}
+          >
+            <Text style={styles.signInButtonText}>Sign In</Text>
+          </TouchableOpacity>
         )}
       </View>
 
@@ -109,28 +160,62 @@ export default function HomeScreen({ navigation }: Props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {!user && videos.length > 0 && (
-          <View style={styles.heroBanner}>
-            <Text style={styles.heroTitle}>Welcome to Tax Talk Pro</Text>
-            <Text style={styles.heroSubtitle}>
-              Access professional tax training videos to enhance your expertise
-            </Text>
-            <View style={styles.heroButtons}>
-              <TouchableOpacity
-                style={styles.heroSubscribeButton}
-                onPress={() => navigation.navigate('Subscription')}
-              >
-                <Text style={styles.heroSubscribeButtonText}>View Plans</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.heroSignInButton}
-                onPress={() => navigation.navigate('Auth')}
-              >
-                <Text style={styles.heroSignInButtonText}>Sign In</Text>
-              </TouchableOpacity>
-            </View>
+        {user && continueWatchingVideos.length > 0 && (
+          <View style={styles.continueWatchingSection}>
+            <TouchableOpacity
+              style={styles.continueCard}
+              onPress={() => navigation.navigate('VideoDetail', { video: continueWatchingVideos[0] })}
+            >
+              <Image
+                source={{ uri: continueWatchingVideos[0].thumbnail_url }}
+                style={styles.continueImage}
+                resizeMode="cover"
+              />
+              <View style={styles.continueOverlay}>
+                <View style={styles.continueTag}>
+                  <Text style={styles.continueTagText}>Continue Watching</Text>
+                </View>
+                <View style={styles.continueInfo}>
+                  <Text style={styles.continueTitle} numberOfLines={2}>
+                    {continueWatchingVideos[0].title}
+                  </Text>
+                  <View style={styles.progressContainer}>
+                    <View style={styles.progressBar}>
+                      <View
+                        style={[
+                          styles.progressFill,
+                          {
+                            width: `${(
+                              (watchProgress.get(continueWatchingVideos[0].id)?.progress_seconds || 0) /
+                              (watchProgress.get(continueWatchingVideos[0].id)?.duration_seconds || 1)
+                            ) * 100}%`
+                          }
+                        ]}
+                      />
+                    </View>
+                    <Text style={styles.progressText}>
+                      {Math.round(
+                        ((watchProgress.get(continueWatchingVideos[0].id)?.progress_seconds || 0) /
+                          (watchProgress.get(continueWatchingVideos[0].id)?.duration_seconds || 1)) *
+                          100
+                      )}%
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
         )}
+
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="What do you want to learn today?"
+            placeholderTextColor="#9ca3af"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
         {loading && (
           <View style={styles.loadingContainer}>
@@ -153,24 +238,15 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
-        {user && profile?.subscription_status !== 'active' && videos.length > 0 && (
-          <TouchableOpacity
-            style={styles.subscribeBanner}
-            onPress={() => navigation.navigate('Subscription')}
-          >
-            <Text style={styles.bannerTitle}>Unlock All Videos</Text>
-            <Text style={styles.bannerSubtitle}>
-              Subscribe for unlimited access to all training content
-            </Text>
-            <View style={styles.bannerButton}>
-              <Text style={styles.bannerButtonText}>View Plans</Text>
-            </View>
-          </TouchableOpacity>
-        )}
 
         {featuredVideos.length > 0 && (
           <View style={styles.categorySection}>
-            <Text style={styles.categoryTitle}>Featured Training</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.categoryTitle}>Recommended for You</Text>
+              <TouchableOpacity>
+                <Text style={styles.viewAllText}>View All</Text>
+              </TouchableOpacity>
+            </View>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -179,23 +255,41 @@ export default function HomeScreen({ navigation }: Props) {
               {featuredVideos.map((video) => (
                 <TouchableOpacity
                   key={video.id}
-                  style={styles.videoCard}
+                  style={styles.recommendedCard}
                   onPress={() => navigation.navigate('VideoDetail', { video })}
                 >
                   <Image
                     source={{ uri: video.thumbnail_url }}
-                    style={styles.thumbnail}
+                    style={styles.recommendedImage}
                     resizeMode="cover"
                   />
-                  <View style={styles.cardContent}>
+                  <View style={styles.recommendedContent}>
                     <Text style={styles.videoTitle} numberOfLines={2}>
                       {video.title}
                     </Text>
+                    <View style={styles.videoMeta}>
+                      <Text style={styles.metaText}>⭐ 4.7</Text>
+                    </View>
                     <View style={styles.videoMeta}>
                       <Text style={styles.metaText}>{video.duration_minutes} min</Text>
                       <Text style={styles.metaText}>•</Text>
                       <Text style={styles.priceText}>${video.price.toFixed(2)}</Text>
                     </View>
+                    <TouchableOpacity
+                      style={styles.enrollButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        if (profile?.subscription_status === 'active') {
+                          navigation.navigate('VideoDetail', { video });
+                        } else {
+                          navigation.navigate('Subscription');
+                        }
+                      }}
+                    >
+                      <Text style={styles.enrollButtonText}>
+                        {profile?.subscription_status === 'active' ? 'Watch Now' : 'Subscribe'}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -205,7 +299,12 @@ export default function HomeScreen({ navigation }: Props) {
 
         {newVideos.length > 0 && (
           <View style={styles.categorySection}>
-            <Text style={styles.categoryTitle}>New Releases</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.categoryTitle}>New Releases</Text>
+              <TouchableOpacity>
+                <Text style={styles.viewAllText}>View All</Text>
+              </TouchableOpacity>
+            </View>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -321,212 +420,242 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#f8f9fa',
   },
   header: {
-    backgroundColor: '#033a66',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  logo: {
+  greetingSection: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 2,
+  },
+  userName: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1f2937',
+  },
+  accountButton: {
+    padding: 0,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#827546',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
-  headerButton: {
-    backgroundColor: '#827546',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  headerButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  headerButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
   signInButton: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: '#827546',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#fff',
   },
   signInButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
   },
-  subscribeButton: {
-    backgroundColor: '#827546',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  subscribeButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
   scrollView: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#f8f9fa',
   },
-  heroBanner: {
-    backgroundColor: '#033a66',
-    margin: 16,
-    padding: 32,
+  continueWatchingSection: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  continueCard: {
     borderRadius: 20,
-    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 8,
-  },
-  heroTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 12,
-    letterSpacing: -0.5,
-  },
-  heroSubtitle: {
-    color: '#fff',
-    fontSize: 14,
-    textAlign: 'center',
-    opacity: 0.9,
-    marginBottom: 20,
-    lineHeight: 20,
-  },
-  heroButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-  },
-  heroSubscribeButton: {
-    flex: 1,
-    backgroundColor: '#827546',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  heroSubscribeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  heroSignInButton: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  heroSignInButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  subscribeBanner: {
-    backgroundColor: '#827546',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 24,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
     elevation: 5,
   },
-  bannerTitle: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: 'bold',
+  continueImage: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#e5e7eb',
+  },
+  continueOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  continueTag: {
+    backgroundColor: '#827546',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
     marginBottom: 8,
   },
-  bannerSubtitle: {
+  continueTagText: {
     color: '#fff',
-    fontSize: 14,
-    opacity: 0.9,
-    marginBottom: 16,
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
-  bannerButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
+  continueInfo: {
+    gap: 8,
   },
-  bannerButtonText: {
-    color: '#827546',
-    fontSize: 14,
+  continueTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  progressBar: {
+    flex: 1,
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#22c55e',
+  },
+  progressText: {
+    color: '#fff',
+    fontSize: 12,
     fontWeight: '600',
   },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    fontSize: 14,
+    color: '#1f2937',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
   categorySection: {
-    marginTop: 32,
+    marginTop: 28,
     marginBottom: 8,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
   categoryTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#1f2937',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    letterSpacing: -0.3,
+  },
+  viewAllText: {
+    fontSize: 14,
+    color: '#827546',
+    fontWeight: '600',
   },
   videoRow: {
+    paddingHorizontal: 20,
+    gap: 16,
+  },
+  recommendedCard: {
+    width: CARD_WIDTH * 1.8,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  recommendedImage: {
+    width: '100%',
+    height: 140,
+    backgroundColor: '#e5e7eb',
+  },
+  recommendedContent: {
+    padding: 14,
+  },
+  enrollButton: {
+    backgroundColor: '#827546',
+    paddingVertical: 10,
     paddingHorizontal: 16,
-    gap: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  enrollButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
   },
   videoCard: {
     width: CARD_WIDTH,
     backgroundColor: '#fff',
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
     overflow: 'hidden',
   },
   thumbnail: {
     width: '100%',
-    height: CARD_WIDTH * 0.65,
+    height: CARD_WIDTH * 0.7,
     backgroundColor: '#e5e7eb',
   },
   cardContent: {
-    padding: 14,
+    padding: 12,
   },
   videoTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: '#1f2937',
-    marginBottom: 8,
+    marginBottom: 6,
     lineHeight: 20,
   },
   videoMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    marginBottom: 4,
   },
   metaText: {
     fontSize: 12,
     color: '#6b7280',
   },
   priceText: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#827546',
     fontWeight: '600',
   },
@@ -575,20 +704,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   allVideosHeader: {
-    marginTop: 40,
+    marginTop: 32,
     marginBottom: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 24,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
   },
   allVideosTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#1f2937',
-    letterSpacing: -0.5,
   },
   bottomPadding: {
-    height: 40,
+    height: 60,
   },
 });
