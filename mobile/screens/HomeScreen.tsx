@@ -389,7 +389,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         {popularVideos.length > 0 && (
           <View style={styles.categorySection}>
-            <Text style={styles.categoryTitle}>Most Popular</Text>
+            <Text style={styles.standaloneCategoryTitle}>Most Popular</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -428,7 +428,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         {Object.entries(groupedVideos).map(([category, categoryVideos]) => (
           <View key={category} style={styles.categorySection}>
-            <Text style={styles.categoryTitle}>{category}</Text>
+            <Text style={styles.standaloneCategoryTitle}>{category}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   },
   categorySection: {
     marginTop: 28,
-    marginBottom: 8,
+    marginBottom: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -700,6 +700,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1f2937',
   },
+  standaloneCategoryTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
   viewAllText: {
     fontSize: 14,
     color: '#827546',
@@ -708,17 +715,19 @@ const styles = StyleSheet.create({
   videoRow: {
     paddingHorizontal: 20,
     gap: 16,
+    paddingBottom: 8,
   },
   recommendedCard: {
     width: CARD_WIDTH * 1.8,
     backgroundColor: '#fff',
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
-    overflow: 'hidden',
+    overflow: 'visible',
+    marginBottom: 8,
   },
   recommendedImage: {
     width: '100%',
@@ -746,11 +755,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
-    overflow: 'hidden',
+    overflow: 'visible',
+    marginBottom: 8,
   },
   thumbnail: {
     width: '100%',
