@@ -118,11 +118,19 @@ export default function HomeScreen({ navigation }: Props) {
     loadVideos();
   };
 
-  const featuredVideos = videos.filter(v => v.is_featured).slice(0, 6);
-  const newVideos = videos.filter(v => v.is_new).slice(0, 6);
-  const popularVideos = [...videos].sort((a, b) => b.view_count - a.view_count).slice(0, 6);
+  const filteredVideos = searchQuery.trim()
+    ? videos.filter(video =>
+        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        video.category?.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : videos;
 
-  const continueWatchingVideos = videos.filter(video => {
+  const featuredVideos = filteredVideos.filter(v => v.is_featured).slice(0, 6);
+  const newVideos = filteredVideos.filter(v => v.is_new).slice(0, 6);
+  const popularVideos = [...filteredVideos].sort((a, b) => b.view_count - a.view_count).slice(0, 6);
+
+  const continueWatchingVideos = filteredVideos.filter(video => {
     const progress = watchProgress.get(video.id);
     return progress && !progress.completed && progress.progress_seconds > 0;
   }).slice(0, 6);
@@ -142,7 +150,7 @@ export default function HomeScreen({ navigation }: Props) {
     return 'There';
   };
 
-  const groupedVideos = videos.reduce((acc, video) => {
+  const groupedVideos = filteredVideos.reduce((acc, video) => {
     const categoryName = video.category?.name || 'Uncategorized';
     if (!acc[categoryName]) {
       acc[categoryName] = [];
@@ -285,6 +293,18 @@ export default function HomeScreen({ navigation }: Props) {
         {!loading && !error && videos.length === 0 && (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No videos available</Text>
+          </View>
+        )}
+
+        {!loading && !error && searchQuery.trim() && filteredVideos.length === 0 && videos.length > 0 && (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No videos found for "{searchQuery}"</Text>
+            <TouchableOpacity
+              style={styles.clearSearchButton}
+              onPress={() => setSearchQuery('')}
+            >
+              <Text style={styles.clearSearchText}>Clear Search</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -845,6 +865,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 40,
+  },
+  clearSearchButton: {
+    backgroundColor: '#827546',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  clearSearchText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   emptyText: {
     fontSize: 16,
