@@ -34,6 +34,12 @@ export default function HomeScreen({ navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
+  const [learningStats, setLearningStats] = useState({
+    weeklyMinutes: 0,
+    weeklyChange: 0,
+    completedVideos: 0,
+    weeklyCompleted: 0,
+  });
 
   useEffect(() => {
     const initializeData = async () => {
@@ -54,6 +60,7 @@ export default function HomeScreen({ navigation }: Props) {
       loadVideos();
       if (user) {
         loadWatchProgress();
+        loadLearningStats();
       }
     };
 
@@ -113,9 +120,66 @@ export default function HomeScreen({ navigation }: Props) {
     }
   };
 
+  const loadLearningStats = async () => {
+    if (!user) return;
+
+    try {
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+      const { data: thisWeekData, error: thisWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, completed, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', oneWeekAgo.toISOString());
+
+      if (thisWeekError) throw thisWeekError;
+
+      const { data: lastWeekData, error: lastWeekError } = await supabase
+        .from('watch_progress')
+        .select('progress_seconds, last_watched_at')
+        .eq('user_id', user.id)
+        .gte('last_watched_at', twoWeeksAgo.toISOString())
+        .lt('last_watched_at', oneWeekAgo.toISOString());
+
+      if (lastWeekError) throw lastWeekError;
+
+      const { data: completedData, error: completedError } = await supabase
+        .from('watch_progress')
+        .select('video_id, completed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
+
+      if (completedError) throw completedError;
+
+      const thisWeekMinutes = Math.round((thisWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const lastWeekMinutes = Math.round((lastWeekData?.reduce((sum, item) => sum + Number(item.progress_seconds), 0) || 0) / 60);
+      const weeklyChange = lastWeekMinutes > 0
+        ? Math.round(((thisWeekMinutes - lastWeekMinutes) / lastWeekMinutes) * 100)
+        : thisWeekMinutes > 0 ? 100 : 0;
+
+      const completedVideos = completedData?.length || 0;
+      const weeklyCompleted = thisWeekData?.filter(item => item.completed).length || 0;
+
+      setLearningStats({
+        weeklyMinutes: thisWeekMinutes,
+        weeklyChange,
+        completedVideos,
+        weeklyCompleted,
+      });
+    } catch (error) {
+      console.error('Error loading learning stats:', error);
+    }
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     loadVideos();
+    if (user) {
+      loadWatchProgress();
+      loadLearningStats();
+    }
   };
 
   const filteredVideos = searchQuery.trim()
@@ -274,6 +338,56 @@ export default function HomeScreen({ navigation }: Props) {
             onChangeText={setSearchQuery}
           />
         </View>
+
+        {user && !searchQuery && (
+          <View style={styles.statsSection}>
+            <Text style={styles.statsSectionTitle}>Your Learning Stats</Text>
+
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <View style={styles.statIconContainer}>
+                  <Text style={styles.statIcon}>⏱️</Text>
+                </View>
+                <Text style={styles.statLabel}>This Week</Text>
+                <Text style={styles.statValue}>
+                  {Math.floor(learningStats.weeklyMinutes / 60)}h {learningStats.weeklyMinutes % 60}m
+                </Text>
+                {learningStats.weeklyChange !== 0 && (
+                  <Text style={[
+                    styles.statChange,
+                    learningStats.weeklyChange > 0 ? styles.statChangePositive : styles.statChangeNegative
+                  ]}>
+                    {learningStats.weeklyChange > 0 ? '+' : ''}{learningStats.weeklyChange}%
+                  </Text>
+                )}
+              </View>
+
+              <View style={styles.statCard}>
+                <View style={styles.statIconContainer}>
+                  <Text style={styles.statIcon}>🏆</Text>
+                </View>
+                <Text style={styles.statLabel}>Completed</Text>
+                <Text style={styles.statValue}>{learningStats.completedVideos}</Text>
+                <Text style={styles.statSubtext}>
+                  {learningStats.weeklyCompleted > 0 ? `${learningStats.weeklyCompleted} this week` : 'No completions yet'}
+                </Text>
+              </View>
+
+              <View style={styles.statCard}>
+                <View style={styles.statIconContainer}>
+                  <Text style={styles.statIcon}>💳</Text>
+                </View>
+                <Text style={styles.statLabel}>Plan</Text>
+                <Text style={styles.statValue}>
+                  {profile?.subscription_status === 'active' ? 'Premium' : 'Free'}
+                </Text>
+                <Text style={styles.statSubtext}>
+                  {profile?.subscription_status === 'active' ? 'Unlimited access' : 'Limited access'}
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
 
         {loading && (
           <View style={styles.loadingContainer}>
@@ -898,5 +1012,66 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 60,
+  },
+  statsSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+  },
+  statsSectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 16,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    alignItems: 'center',
+  },
+  statIconContainer: {
+    marginBottom: 12,
+  },
+  statIcon: {
+    fontSize: 32,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 4,
+  },
+  statChange: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  statChangePositive: {
+    color: '#10b981',
+  },
+  statChangeNegative: {
+    color: '#ef4444',
+  },
+  statSubtext: {
+    fontSize: 11,
+    color: '#9ca3af',
+    textAlign: 'center',
   },
 });
