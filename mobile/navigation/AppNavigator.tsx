@@ -8,6 +8,7 @@ import VideoDetailScreen from '../screens/VideoDetailScreen';
 import AuthScreen from '../screens/AuthScreen';
 import AccountScreen from '../screens/AccountScreen';
 import SubscriptionScreen from '../screens/SubscriptionScreen';
+import CategoryListScreen from '../screens/CategoryListScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Account: undefined;
   Subscription: undefined;
+  CategoryList: { title: string; videos: Video[] };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -63,6 +65,11 @@ export default function AppNavigator() {
             title: 'Subscribe',
             presentation: 'modal'
           }}
+        />
+        <Stack.Screen
+          name="CategoryList"
+          component={CategoryListScreen}
+          options={({ route }) => ({ title: route.params.title })}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -293,7 +293,14 @@ export default function HomeScreen({ navigation }: Props) {
           <View style={styles.categorySection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.categoryTitle}>Recommended for You</Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('CategoryList', {
+                    title: 'Recommended for You',
+                    videos: featuredVideos,
+                  })
+                }
+              >
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
             </View>
@@ -351,7 +358,14 @@ export default function HomeScreen({ navigation }: Props) {
           <View style={styles.categorySection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.categoryTitle}>New Releases</Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('CategoryList', {
+                    title: 'New Releases',
+                    videos: newVideos,
+                  })
+                }
+              >
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
             </View>
