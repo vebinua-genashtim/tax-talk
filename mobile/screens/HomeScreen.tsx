@@ -23,7 +23,7 @@ interface Props {
 }
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.45;
+const CARD_WIDTH = width * 0.42;
 const HERO_CARD_WIDTH = width * 0.85;
 
 export default function HomeScreen({ navigation }: Props) {
@@ -713,8 +713,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   videoRow: {
-    paddingHorizontal: 20,
-    gap: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
+    gap: 12,
     paddingBottom: 8,
   },
   recommendedCard: {
