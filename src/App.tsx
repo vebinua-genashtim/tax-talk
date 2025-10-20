@@ -16,12 +16,14 @@ import { Video, Category, supabase } from './lib/supabase';
 import { mockVideos, mockCategories } from './data/mockData';
 
 function AppContent() {
+  
   const { user, profile } = useAuth();
   const [videos, setVideos] = useState<Video[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
   const [watchProgress, setWatchProgress] = useState<Map<string, { progress_seconds: number; duration_seconds: number; completed: boolean }>>(new Map());
+  const [freePreviewVideoIds, setFreePreviewVideoIds] = useState<Set<string>>(new Set());
   const [learningStats, setLearningStats] = useState({
     weeklyMinutes: 0,
     weeklyChange: 0,
@@ -40,13 +42,31 @@ function AppContent() {
   const [redirectToSubscription, setRedirectToSubscription] = useState(false);
 
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  
 
   useEffect(() => {
-    setCategories(mockCategories);
-    setVideos(mockVideos);
-    setFilteredVideos(mockVideos);
-    setIsLoading(false);
-  }, []);
+  setCategories(mockCategories);
+  setVideos(mockVideos);
+  setFilteredVideos(mockVideos);
+
+  // Compute first 2 videos per category for free preview
+  const categoryMap = new Map<string, Video[]>();
+  mockVideos.forEach(video => {
+    if (!categoryMap.has(video.category_id)) {
+      categoryMap.set(video.category_id, []);
+    }
+    categoryMap.get(video.category_id)!.push(video);
+  });
+
+  const freeIds = new Set<string>();
+  categoryMap.forEach(videos => {
+    // Take first 2 videos in each category
+    videos.slice(0, 2).forEach(v => freeIds.add(v.id));
+  });
+
+  setFreePreviewVideoIds(freeIds);
+  setIsLoading(false);
+}, []);
 
   useEffect(() => {
     if (user) {
@@ -194,13 +214,18 @@ function AppContent() {
   }, [searchQuery, videos, selectedCategory]);
 
 
-  const hasAccess = (videoId: string): boolean => {
-    const isActive = profile?.subscription_status === 'active';
-    const hasPurchased = purchases.has(videoId);
-    console.log('hasAccess check:', { videoId, isActive, hasPurchased, profile, purchases: Array.from(purchases) });
-    if (isActive) return true;
-    return hasPurchased;
-  };
+const hasAccess = (videoId: string): boolean => {
+  // Always allow first 2 videos per category
+  if (freePreviewVideoIds.has(videoId)) {
+    return true;
+  }
+
+  const isActive = profile?.subscription_status === 'active';
+  const hasPurchased = purchases.has(videoId);
+  console.log('hasAccess check:', { videoId, isActive, hasPurchased, profile, purchases: Array.from(purchases) });
+  if (isActive) return true;
+  return hasPurchased;
+};
 
   const handleVideoClick = (video: Video) => {
     setSelectedVideo(video);
