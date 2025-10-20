@@ -6,9 +6,16 @@ interface VideoCardProps {
   hasAccess: boolean;
   onClick: (video: Video) => void;
   progress?: number;
+  showPrice?: boolean; // Optional prop to control price visibility
 }
 
-export function VideoCard({ video, hasAccess, onClick, progress }: VideoCardProps) {
+export function VideoCard({ 
+  video, 
+  hasAccess, 
+  onClick, 
+  progress, 
+  showPrice = true // Default to true so existing usage doesn't break
+}: VideoCardProps) {
   return (
     <div
       className="cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.02]"
@@ -42,7 +49,8 @@ export function VideoCard({ video, hasAccess, onClick, progress }: VideoCardProp
           </div>
         )}
 
-        {!hasAccess && (
+        {/* Only show price if showPrice is true, user lacks access, and video has a price */}
+        {!hasAccess && showPrice && video.price !== undefined && (
           <div className="absolute top-2.5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
             ${video.price.toFixed(2)}
           </div>
