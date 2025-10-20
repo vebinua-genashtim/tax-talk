@@ -449,6 +449,7 @@ const hasAccess = (videoId: string): boolean => {
                     key={video.id}
                     video={video}
                     hasAccess={hasAccess(video.id)}
+                     showPrice={!isFreePreview(video.id)}
                     onClick={handleVideoClick}
                   />
                 ))}
@@ -565,6 +566,7 @@ const hasAccess = (videoId: string): boolean => {
                     key={video.id}
                     video={video}
                     hasAccess={hasAccess(video.id)}
+                     showPrice={!isFreePreview(video.id)}
                     onClick={handleVideoClick}
                   />
                 ))}
@@ -631,6 +633,7 @@ const hasAccess = (videoId: string): boolean => {
                   key={video.id}
                   video={video}
                   hasAccess={hasAccess(video.id)}
+                   showPrice={!isFreePreview(video.id)}
                   onClick={handleVideoClick}
                 />
               ))}
@@ -697,6 +700,7 @@ const hasAccess = (videoId: string): boolean => {
                   key={video.id}
                   video={video}
                   hasAccess={hasAccess(video.id)}
+                   showPrice={!isFreePreview(video.id)}
                   onClick={handleVideoClick}
                 />
               ))}
