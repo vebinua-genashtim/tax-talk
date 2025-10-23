@@ -50,7 +50,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   const demoAccounts: DemoAccount[] = [
     {
       email: 'free@taxtalkpro.com',
-      password: 'password123',
+      password: 'demo123456',
       name: 'Free User',
       type: 'free',
       description: 'Watch trailers only',
@@ -58,7 +58,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
     },
     {
       email: 'payper@taxtalkpro.com',
-      password: 'password123',
+      password: 'demo123456',
       name: 'Pay-Per-View User',
       type: 'pay-per-view',
       description: 'Purchased 5 videos',
@@ -66,7 +66,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
     },
     {
       email: 'subscriber@taxtalkpro.com',
-      password: 'password123',
+      password: 'demo123456',
       name: 'Active Subscriber',
       type: 'subscriber',
       description: 'Full access to all videos',
