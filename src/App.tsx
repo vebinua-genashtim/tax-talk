@@ -434,9 +434,9 @@ const hasAccess = (videoId: string): boolean => {
           hasPurchases={purchases.size > 0}
         />
 
-        {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
+        {!searchQuery && !selectedCategory && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={() => setSubscriptionModalOpen(true)} isSubscribed={profile?.subscription_status === 'active'} isLoggedIn={true} />}
 
-        <div className={searchQuery ? 'pt-20 pb-12' : 'pb-12 -mt-24 sm:-mt-32 relative z-10'}>
+        <div className={searchQuery || selectedCategory ? 'pt-20 pb-12' : 'pb-12 -mt-24 sm:-mt-32 relative z-10'}>
           {searchQuery && filteredVideos.length === 0 && (
             <div className="text-center py-12 sm:py-20 px-4">
               <p className="text-white text-base sm:text-lg">No videos found matching "{searchQuery}"</p>
@@ -639,9 +639,9 @@ const hasAccess = (videoId: string): boolean => {
         onSubscribeClick={handleGuestSubscribeClick}
       />
 
-      {!searchQuery && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={handleGuestSubscribeClick} isLoggedIn={false} />}
+      {!searchQuery && !selectedCategory && <Hero video={featuredVideos[0]} onPlay={handleVideoClick} onSubscribe={handleGuestSubscribeClick} isLoggedIn={false} />}
 
-      <div className={searchQuery ? 'pt-16 sm:pt-20 px-3 sm:px-4 md:px-8' : 'px-3 sm:px-4 md:px-8 py-6 sm:py-8'}>
+      <div className={searchQuery || selectedCategory ? 'pt-16 sm:pt-20 px-3 sm:px-4 md:px-8' : 'px-3 sm:px-4 md:px-8 py-6 sm:py-8'}>
         {searchQuery && filteredVideos.length === 0 && (
           <div className="px-3 sm:px-4 md:px-12 py-12 sm:py-20 text-center">
             <p className="text-gray-900 text-base sm:text-xl">No videos found matching "{searchQuery}"</p>
