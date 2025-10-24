@@ -217,6 +217,10 @@ function AppContent() {
   }, [searchQuery, videos, selectedCategory]);
 
 
+const isFreePreview = (videoId: string): boolean => {
+  return freePreviewVideoIds.has(videoId);
+};
+
 const hasAccess = (videoId: string): boolean => {
   // Always allow first 2 videos per category
   if (freePreviewVideoIds.has(videoId)) {
@@ -225,9 +229,6 @@ const hasAccess = (videoId: string): boolean => {
 
   const isActive = profile?.subscription_status === 'active';
   const hasPurchased = purchases.has(videoId);
-  const isFreePreview = (videoId: string): boolean => {
-  return freePreviewVideoIds.has(videoId);
-};
   console.log('hasAccess check:', { videoId, isActive, hasPurchased, profile, purchases: Array.from(purchases) });
   if (isActive) return true;
   return hasPurchased;
