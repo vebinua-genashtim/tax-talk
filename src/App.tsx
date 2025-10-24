@@ -526,19 +526,28 @@ const hasAccess = (videoId: string): boolean => {
               <div className="mb-12 px-4 sm:px-6 md:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-white tracking-tight">Browse by Category</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {categories.map(category => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 hover:from-white/20 hover:to-white/10 transition-all duration-300"
-                    >
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <h3 className="text-white font-semibold text-sm sm:text-base text-center leading-tight">
-                          {category.name}
-                        </h3>
-                      </div>
-                    </button>
-                  ))}
+                  {categories.map(category => {
+                    const categoryVideos = videos.filter(v => v.category_id === category.id);
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setSearchQuery('');
+                          setSelectedCategory(category.id);
+                        }}
+                        className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 hover:from-white/20 hover:to-white/10 transition-all duration-300"
+                      >
+                        <div className="absolute inset-0 flex items-center justify-center p-4">
+                          <h3 className="text-white font-semibold text-sm sm:text-base text-center leading-tight">
+                            {category.name}
+                          </h3>
+                        </div>
+                        <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white font-medium">
+                          {categoryVideos.length}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </>
@@ -661,20 +670,29 @@ const hasAccess = (videoId: string): boolean => {
             <div className="mb-12 sm:mb-16 md:mb-20">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>Browse by Category</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 hover:scale-105 transition-transform duration-200 shadow-lg"
-                  >
-                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
-                    <div className="absolute inset-0 flex items-center justify-center p-3">
-                      <h3 className="text-white font-semibold text-sm text-center leading-tight drop-shadow-lg">
-                        {category.name}
-                      </h3>
-                    </div>
-                  </button>
-                ))}
+                {categories.map(category => {
+                  const categoryVideos = videos.filter(v => v.category_id === category.id);
+                  return (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCategory(category.id);
+                      }}
+                      className="group relative aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 hover:scale-105 transition-transform duration-200 shadow-lg"
+                    >
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
+                      <div className="absolute inset-0 flex items-center justify-center p-3">
+                        <h3 className="text-white font-semibold text-sm text-center leading-tight drop-shadow-lg">
+                          {category.name}
+                        </h3>
+                      </div>
+                      <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white font-medium">
+                        {categoryVideos.length}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </>
