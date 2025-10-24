@@ -208,6 +208,9 @@ function AppContent() {
 
     if (selectedCategory) {
       filtered = filtered.filter(video => video.category_id === selectedCategory);
+      console.log('Selected Category:', selectedCategory);
+      console.log('Filtered Videos:', filtered.length);
+      console.log('All Videos:', videos.map(v => ({ id: v.id, title: v.title, category_id: v.category_id })));
     }
 
     setFilteredVideos(filtered);
@@ -569,17 +572,29 @@ const hasAccess = (videoId: string): boolean => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-white tracking-tight">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-                {filteredVideos.map(video => (
-                  <VideoCard
-                    key={video.id}
-                    video={video}
-                    hasAccess={hasAccess(video.id)}
-                     showPrice={!isFreePreview(video.id)}
-                    onClick={handleVideoClick}
-                  />
-                ))}
-              </div>
+              {filteredVideos.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-white/60 text-lg">No videos found in this category</p>
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+                  >
+                    View All Categories
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                  {filteredVideos.map(video => (
+                    <VideoCard
+                      key={video.id}
+                      video={video}
+                      hasAccess={hasAccess(video.id)}
+                       showPrice={!isFreePreview(video.id)}
+                      onClick={handleVideoClick}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -712,17 +727,29 @@ const hasAccess = (videoId: string): boolean => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>
               {categories.find(c => c.id === selectedCategory)?.name}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredVideos.map(video => (
-                <VideoCard
-                  key={video.id}
-                  video={video}
-                  hasAccess={hasAccess(video.id)}
-                   showPrice={!isFreePreview(video.id)}
-                  onClick={handleVideoClick}
-                />
-              ))}
-            </div>
+            {filteredVideos.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">No videos found in this category</p>
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  className="mt-4 px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+                >
+                  View All Categories
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {filteredVideos.map(video => (
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    hasAccess={hasAccess(video.id)}
+                     showPrice={!isFreePreview(video.id)}
+                    onClick={handleVideoClick}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
