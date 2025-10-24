@@ -557,7 +557,7 @@ const hasAccess = (videoId: string): boolean => {
           )}
 
           {selectedCategory && (
-            <div className="px-4 sm:px-6 md:px-8">
+            <div className="px-4 sm:px-6 md:px-8 min-h-screen">
               <div className="mb-6">
                 <button
                   onClick={() => setSelectedCategory(null)}
@@ -572,8 +572,9 @@ const hasAccess = (videoId: string): boolean => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-white tracking-tight">
                 {categories.find(c => c.id === selectedCategory)?.name}
               </h2>
+              <p className="text-white/60 mb-4">Showing {filteredVideos.length} videos</p>
               {filteredVideos.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-12 bg-white/5 rounded-lg">
                   <p className="text-white/60 text-lg">No videos found in this category</p>
                   <button
                     onClick={() => setSelectedCategory(null)}
@@ -714,7 +715,7 @@ const hasAccess = (videoId: string): boolean => {
         )}
 
         {selectedCategory && (
-          <div>
+          <div className="min-h-screen">
             <div className="mb-4 sm:mb-6">
               <button
                 onClick={() => setSelectedCategory(null)}
@@ -727,8 +728,9 @@ const hasAccess = (videoId: string): boolean => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6" style={{ color: '#033a66' }}>
               {categories.find(c => c.id === selectedCategory)?.name}
             </h2>
+            <p className="text-gray-600 mb-4">Showing {filteredVideos.length} videos</p>
             {filteredVideos.length === 0 ? (
-              <div className="text-center py-12">
+              <div className="text-center py-12 bg-gray-50 rounded-lg">
                 <p className="text-gray-600 text-lg">No videos found in this category</p>
                 <button
                   onClick={() => setSelectedCategory(null)}
